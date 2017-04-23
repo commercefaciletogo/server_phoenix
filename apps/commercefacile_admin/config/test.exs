@@ -15,5 +15,5 @@ config :commercefacile_admin, CommercefacileAdmin.Repo,
   username: "postgres",
   password: "postgres",
   database: "commercefacile_admin_test",
-  hostname: "localhost",
+  hostname: "172.17.0.5",
   pool: Ecto.Adapters.SQL.Sandbox
