@@ -32,6 +32,7 @@ defmodule Commercefacile.Mixfile do
   # Type `mix help deps` for examples and options.
   defp deps do
     [{:postgrex, ">= 0.0.0"},
+    {:junit_formatter, ">= 0.0.0", only: :test},
      {:ecto, "~> 2.1"}]
   end
 

@@ -39,6 +39,7 @@ defmodule Commercefacile.Web.Mixfile do
      {:phoenix_live_reload, "~> 1.0", only: :dev},
      {:gettext, "~> 0.11"}, 
      {:commercefacile, in_umbrella: true}, 
+     {:junit_formatter, ">= 0.0.0", only: :test},
      {:cowboy, "~> 1.0"}]
   end
 
