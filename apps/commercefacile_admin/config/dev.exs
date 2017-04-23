@@ -54,5 +54,5 @@ config :commercefacile_admin, CommercefacileAdmin.Repo,
   username: "postgres",
   password: "postgres",
   database: "commercefacile_admin_dev",
-  hostname: "172.17.0.4",
+  hostname: "172.17.0.5",
   pool_size: 10
