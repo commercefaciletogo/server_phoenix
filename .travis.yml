@@ -1,0 +1,21 @@
+language: elixir
+ 
+elixir:
+  - 1.4.1
+otp_release: 
+  - 19.0
+ 
+addons:
+   postgresql: "9.4"
+
+env:
+  - MIX_ENV=test
+sudo: false
+
+before_script:
+  - mix deps.get --only test
+  - psql -U postgres -c 'CREATE DATABASE commercefacile_admin_test;'
+  - psql -U postgres -c 'CREATE DATABASE commercefacile_test;'
+
+script:
+  - mix test 
