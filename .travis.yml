@@ -12,6 +12,11 @@ env:
   - MIX_ENV=test
 sudo: false
 
+cache:
+  directories:
+    - _build
+    - deps
+
 before_script:
   - mix deps.get --only test
   - psql -U postgres -c 'CREATE DATABASE commercefacile_admin_test;'
