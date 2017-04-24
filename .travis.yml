@@ -16,6 +16,9 @@ before_script:
   - mix deps.get --only test
   - psql -U postgres -c 'CREATE DATABASE commercefacile_admin_test;'
   - psql -U postgres -c 'CREATE DATABASE commercefacile_test;'
+  - mkdir -p apps/commercefacile/priv/repo/migrations
+  - mkdir -p apps/commercefacile_web/priv/repo/migrations
+  - mkdir -p apps/commercefacile_admin/priv/repo/migrations
 
 script:
   - mix test 
