@@ -23,5 +23,8 @@ dependencies:
 
 test:
   override:
+    - mkdir -p apps/commercefacile/priv/repo/migrations
+    - mkdir -p apps/commercefacile_web/priv/repo/migrations
+    - mkdir -p apps/commercefacile_admin/priv/repo/migrations
     - mix test
     - mkdir -p $CIRCLE_TEST_REPORTS/exunit; cp _build/test/lib/taiga/results.xml $CIRCLE_TEST_REPORTS/exunit
