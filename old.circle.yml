@@ -1,0 +1,33 @@
+machine:
+  services:
+    - postgresql
+
+  environment:
+    PATH: "$HOME/.asdf/bin:$HOME/.asdf/shims:$PATH"
+    MIX_ENV: test
+
+dependencies:
+  cache_directories:
+    - ~/.asdf
+    - deps
+    - _build
+  override:
+    - git clone https://github.com/HashNuke/asdf.git ~/.asdf || `:`
+    - asdf plugin-add erlang https://github.com/HashNuke/asdf-erlang.git || `:`
+    - asdf plugin-add elixir https://github.com/HashNuke/asdf-elixir.git || `:`
+    - asdf install erlang '19.0'
+    - asdf install elixir '1.4.1'
+    - asdf global erlang '19.0'
+    - asdf global elixir '1.4.1'
+    - mix local.hex --force
+    - mix local.rebar --force
+    - mix deps.get
+    - mix deps.compile
+
+test:
+  override:
+    - mkdir -p apps/commercefacile/priv/repo/migrations
+    - mkdir -p apps/commercefacile_web/priv/repo/migrations
+    - mkdir -p apps/commercefacile_admin/priv/repo/migrations
+    - mix test
+    - mkdir -p $CIRCLE_TEST_REPORTS/exunit; cp _build/test/lib/taiga/results.xml $CIRCLE_TEST_REPORTS/exunit
