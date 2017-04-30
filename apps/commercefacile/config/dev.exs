@@ -6,5 +6,5 @@ config :commercefacile, Commercefacile.Repo,
   username: "commercefacile_dev",
   password: "commercefacile_dev",
   database: "commercefacile_dev",
-  hostname: "172.17.0.2",
+  hostname: "172.17.0.3",
   pool_size: 10

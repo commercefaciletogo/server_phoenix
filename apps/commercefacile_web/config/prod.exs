@@ -15,8 +15,10 @@ use Mix.Config
 # which you typically run after static files are built.
 config :commercefacile_web, Commercefacile.Web.Endpoint,
   on_init: {Commercefacile.Web.Endpoint, :load_from_system_env, []},
-  url: [host: "example.com", port: 80],
-  cache_static_manifest: "priv/static/cache_manifest.json"
+  url: [host: "phoenix.commercefacile.com", port: 80],
+  cache_static_manifest: "priv/static/cache_manifest.json",
+  server: true,
+  version: Mix.Project.config[:version]
 
 # ## SSL Support
 #
