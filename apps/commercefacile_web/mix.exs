@@ -21,7 +21,7 @@ defmodule Commercefacile.Web.Mixfile do
   # Type `mix help compile.app` for more information.
   def application do
     [mod: {Commercefacile.Web.Application, []},
-     extra_applications: [:logger, :runtime_tools]]
+     extra_applications: [:logger, :runtime_tools, :geoip]]
   end
 
   # Specifies which paths to compile per environment.
@@ -40,6 +40,7 @@ defmodule Commercefacile.Web.Mixfile do
      {:gettext, "~> 0.11"}, 
      {:commercefacile, in_umbrella: true}, 
      {:junit_formatter, ">= 0.0.0", only: :test},
+     {:geoip, "~> 0.1"},
      {:cowboy, "~> 1.0"}]
   end
 

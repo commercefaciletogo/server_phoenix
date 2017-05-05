@@ -17,6 +17,14 @@ defmodule Commercefacile.Web.Router do
     pipe_through :browser # Use the default browser stack
 
     get "/", PageController, :index
+    get "/ads", PageController, :ads
+
+    get "/help", InfoPageController, :help
+    get "/about", InfoPageController, :about
+    get "/terms", InfoPageController, :terms
+    get "/privacy", InfoPageController, :privacy
+    get "/contact", InfoPageController, :contact
+    
   end
 
   # Other scopes may use custom stacks.
