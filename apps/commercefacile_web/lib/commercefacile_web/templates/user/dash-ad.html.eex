@@ -1,0 +1,109 @@
+<article class="media ad is-online">
+    <div class="media-left">
+        <div class="ad-thumbnails-image-wrapper">
+            <!--<img src="http://www.lorempixel.com/700/500" alt="">-->
+        </div>
+    </div>
+    <div class="media-content">
+        <div class="content">
+            <p>
+                <strong class="ad-title">Titre de l'annonce</strong>  
+                <small class="status is-hidden-mobile">statue: En ligne</small>
+            </p>
+        </div>
+        <div class="content is-small">
+            <p class="category">
+                Category de l'annonce > sub category
+            </p>
+        </div>
+        <div class="content">
+            <p class="price">
+                <strong>2000</strong>  <span>F CFA</span> 
+            </p>
+        </div>
+    </div>
+    <div class="media-right">
+        <%= render "online-ad-actions.html" %>
+    </div>
+</article>
+
+<article class="media ad is-offline">
+    <div class="media-left">
+        <div class="ad-thumbnails-image-wrapper">
+            <!--<img src="http://www.lorempixel.com/700/500" alt="">-->
+        </div>
+    </div>
+    <div class="media-content">
+        <div class="content">
+            <p>
+                <strong class="ad-title">Titre de l'annonce</strong> 
+                <small class="status is-hidden-mobile">statue: Hors ligne</small> 
+            </p>
+        </div>
+        <div class="content is-small">
+            <p class="category">
+                Category de l'annonce > sub category 
+            </p>
+        </div>
+        <div class="content">
+            <p class="price">
+                <strong>2000</strong>  <span>F CFA</span> 
+            </p>
+        </div>
+    </div>
+    <div class="media-right">
+        <%= render "offline-ad-actions.html" %>
+    </div>
+</article>
+
+<article class="media ad is-rejected">
+    <div class="media-left">
+        <div class="ad-thumbnails-image-wrapper">
+            <!--<img src="http://www.lorempixel.com/700/500" alt="">-->
+        </div>
+    </div>
+    <div class="media-content">
+        <div class="content">
+            <p>
+                <strong class="ad-title">Titre de l'annonce</strong>  
+                <small class="status is-hidden-mobile">statue: Rejetee</small>
+            </p>
+        </div>
+        <div class="content is-small">
+            <p class="category">
+                Category de l'annonce > sub category 
+            </p>
+        </div>
+        <div class="content">
+            <p class="price">
+                <strong>2000</strong>  <span>F CFA</span> 
+            </p>
+        </div>
+    </div>
+    <div class="media-right">
+        <%= render "rejected-ad-actions.html" %>
+    </div>
+</article>
+
+<div class="modal">
+    <div class="modal-background"></div>
+        <div class="modal-card">
+            <header class="modal-card-head" style="padding: .5rem;">
+                <p class="modal-card-title" style="font-size: 1em;">Titre de l'annonce erreurs</p>
+                <button class="delete"></button>
+            </header>
+        <section class="modal-card-body" style="padding: .5rem;">
+            <div class="content">
+                <ol style="margin-top: 0;">
+                    <li>Titre de l'annonce</li>
+                    <li>Images de l'annonce</li>
+                    <li>Categorie de l'annonce</li>
+                </ol>
+            </div>
+        </section>
+        <footer class="modal-card-foot" style="padding: .5rem;">
+            <a class="button is-small">Corriger</a>
+            <a class="button is-small">Fermer</a>
+        </footer>
+    </div>
+</div>

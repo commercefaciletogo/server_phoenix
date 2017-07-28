@@ -1,0 +1,26 @@
+<%= flash? @conn %>
+
+<section class="section" style="padding-top: 0;">
+    <div class="container">
+        <div class="columns">
+            <div class="column is-4 is-offset-4">
+                <%= form_for @changeset, auth_path(@conn, :post_code), [as: :code], fn f -> %>
+                    <div class="field">
+                        <label class="label">Code de Verification</label>
+                        <p class="control has-icons-left">
+                            <%= input f, :code, class: "input", required: true %>
+                            <%= make_icon "fa fa-pencil" %>
+                        </p>
+                        <%= make_help f, :code, "Saisi le code recu par SMS." %>
+                    </div>
+
+                    <div class="field">
+                        <p class="control is-expanded">
+                            <button class="button submit is-fullwidth">Verifier</button>
+                        </p>
+                    </div>
+                <% end %>
+            </div>
+        </div>
+    </div>
+</section>

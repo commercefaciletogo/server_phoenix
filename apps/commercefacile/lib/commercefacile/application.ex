@@ -13,7 +13,9 @@ defmodule Commercefacile.Application do
     import Supervisor.Spec, warn: false
 
     Supervisor.start_link([
-      worker(Commercefacile.Repo, []),
+      worker(Commercefacile.Repo, []), 
+      supervisor(Commercefacile.Image.Storage.Opentex.Cloudfiles, []), 
+      supervisor(Commercefacile.Image.Storage.Opentex.CloudfilesCDN, [])
     ], strategy: :one_for_one, name: Commercefacile.Supervisor)
   end
 end

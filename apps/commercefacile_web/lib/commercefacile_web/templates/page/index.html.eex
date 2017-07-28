@@ -1,1 +1,63 @@
-<%= gettext "Welcome to %{name}", name: "Commercefacile.com" %>
+<section class="section" style="padding-top: 0;">
+  <div class="container">
+    <div class="columns">
+      <div class="column is-one-third">
+        <div class="block">
+          <div class="heading">
+            <h2 class="subtitle" style="text-transform: initial;">
+              Trouvez la bonne affaire parmi 
+              <span style="color: #F79520; font-size: .8em;">27,061,112</span> 
+              petites annonces sur commercefacile.
+            </h2>
+          </div>
+        </div>
+        <div class="block">
+          <a href="<%= ad_path(@conn, :create) %>" class="button is-main is-fullwidth">Déposer une Annonce</a>
+        </div>
+        <div class="block">
+          <a href="<%= ad_path(@conn, :index) %>" class="button is-fullwidth is-outlined">Rechercher autour de moi</a>
+        </div>
+        <div class="block">
+          <a class="button is-fullwidth is-outlined">
+            <span class="icon" style="margin-right: 3px;">
+              <i class="fa fa-facebook"></i>
+            </span>
+            Aime nous sur facebook
+          </a>
+        </div>
+      </div>
+      <div class="column">
+        <div class="content has-text-centered">
+          <%= render "_map.html", assigns %>
+        </div>
+      </div>
+      <div class="column">
+        <aside class="menu is-hidden-mobile">
+          <p class="menu-label">
+            Villes
+          </p>
+          <ul class="menu-list">
+            <li>
+              <ul>
+                <%= render_many @cities, Commercefacile.Web.PageView, "city_list_item.html", assigns %>
+              </ul>
+            </li>
+          </ul>
+
+          <p class="menu-label">
+            Regions
+          </p>
+          <ul class="menu-list">
+            <li>
+              <ul>
+                <%= render_many @regions, Commercefacile.Web.PageView, "region_list_item.html", assigns %>
+              </ul>
+            </li>
+          </ul>
+        </aside>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%= render "_categories.html", assigns %>

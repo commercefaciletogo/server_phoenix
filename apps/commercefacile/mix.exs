@@ -32,7 +32,17 @@ defmodule Commercefacile.Mixfile do
   # Type `mix help deps` for examples and options.
   defp deps do
     [{:postgrex, ">= 0.0.0"},
+    {:ksuid, "~> 0.1.2"},
+    {:money, "~> 1.2"},
+    {:timex, "~> 3.1"},
+    {:openstex, "~> 0.3.6"},
+    {:comeonin, "~> 3.2"},
+    {:monetized, "~> 0.5.0"},
+    {:mapail, "~> 1.0"},
+    {:openstex_adapters_rackspace, "~> 0.3.0"},
     {:junit_formatter, ">= 0.0.0", only: :test},
+    {:mix_test_watch, "~> 0.3", only: :dev, runtime: false, override: true},
+     {:ex_unit_notifier, "~> 0.1", only: :test},
      {:ecto, "~> 2.1"}]
   end
 

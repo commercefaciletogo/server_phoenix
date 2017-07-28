@@ -1,0 +1,26 @@
+<%= flash? @conn %>
+
+<section class="section" style="padding-top: 0;">
+    <div class="container">
+        <div class="columns">
+            <div class="column is-4 is-offset-4">
+                <%= form_for @changeset, auth_path(@conn, :post_verify), [as: :verify], fn f -> %>
+                    <div class="field">
+                        <label class="label">Numero de telephone</label>
+                        <p class="control has-icons-left has-icons-right">
+                            <%= input f, :phone, class: "input", required: true, using: :telephone_input %>
+                            <%= make_icon "fa fa-phone" %>
+                        </p>
+                        <%= make_help f, :phone, "example: +228 999 99 99" %>
+                    </div>
+
+                    <div class="field">
+                        <p class="control is-expanded">
+                            <button class="button submit is-fullwidth">Envoyer le code</button>
+                        </p>
+                    </div>
+                <% end %>
+            </div>
+        </div>
+    </div>
+</section>

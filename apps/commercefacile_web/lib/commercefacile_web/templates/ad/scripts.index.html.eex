@@ -1,0 +1,95 @@
+<script>
+    function getJsonFromUrl() {
+        var query = location.search.substr(1);
+        var result = {};
+        query.split("&").forEach(function(part) {
+            var item = part.split("=");
+            result[item[0]] = decodeURIComponent(item[1]);
+        });
+        return result;
+    }
+    function updateQueryStringParam (key, value) {
+        var baseUrl = [location.protocol, '//', location.host, location.pathname].join(''),
+            urlQueryString = document.location.search,
+            newParam = key + '=' + value,
+            params = '?' + newParam;
+        // If the "search" string exists, then build params from it
+        if (urlQueryString) {
+            updateRegex = new RegExp('([\?&])' + key + '[^&]*');
+            removeRegex = new RegExp('([\?&])' + key + '=[^&;]+[&;]?');
+            if( typeof value == 'undefined' || value == null || value == '' ) { // Remove param if value is empty
+                params = urlQueryString.replace(removeRegex, "$1");
+                params = params.replace( /[&;]$/, "" );
+            } else if (urlQueryString.match(updateRegex) !== null) { // If param exists already, update it
+                params = urlQueryString.replace(updateRegex, "$1" + newParam);
+            } else { // Otherwise, add it to end of query string
+                params = urlQueryString + '&' + newParam;
+            }
+        }
+        window.history.replaceState({}, "", baseUrl + params);
+    };
+
+    function addslashes(str) {
+        return (str + '').replace(/[\\"']/g, '\\$&').replace(/\u0000/g, '\\0');
+    }
+
+    function selectCategory(category){
+        document.querySelector(".select.category span").innerText = category.name;
+        document.querySelector("input[name='c']").value = category.uuid;
+        document.querySelector(".category-mega-menu").classList.toggle("is-hidden");
+    }
+
+    document.querySelector(".select.category").addEventListener("click", function(){
+        document.querySelector(".category-mega-menu").classList.toggle("is-hidden");
+    })
+
+    if(getJsonFromUrl().hasOwnProperty("q")){
+        var searchInputs = document.querySelectorAll("input[name='q']");
+        var query = getJsonFromUrl().q;
+        console.log(searchInputs);
+        searchInputs.forEach(function(input){
+            input.value = query.replace("+", " ");
+        });
+    }
+
+    var filterInput = document.querySelector("select.filter");
+
+    if(getJsonFromUrl().hasOwnProperty("s")){
+        var filter = getJsonFromUrl().s;
+        if(filter.startsWith("p")){
+            if(filter.split("|")[1] === "asc"){
+                filterInput.selectedIndex = 2;
+            }else{
+                filterInput.selectedIndex = 3;
+            }
+        }else{
+            if(filter.split("|")[1] === "asc"){
+                filterInput.selectedIndex = 1;
+            }else{
+                filterInput.selectedIndex = 0;
+            }
+        }
+    }
+
+    filterInput.addEventListener("change", function(e){
+        var url = document.location.href,
+            filter = e.target.value;
+            if(document.location.search){
+                console.log("has query");
+                if(getJsonFromUrl().hasOwnProperty("s")){
+                    // update it to new value
+                    console.log("has s");
+                    updateQueryStringParam("s", filter);
+                    window.location.reload(true);
+                }else{
+                    // add it
+                    var new_url = url + "&s=" + filter;
+                    return document.location = new_url;
+                }
+            }else{
+                // add query string
+                var new_url = url + "?s=" + filter;
+                document.location = new_url;
+            }
+    })
+</script>

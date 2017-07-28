@@ -1,0 +1,136 @@
+<script>
+    window.totalOfImagesInSession = <%= length(@images) %>;
+    window.sessionImages = <%= raw Poison.encode! @images %>;
+    window.uploadUrl = "/uploads";
+    window.csrfToken = <%= raw Plug.CSRFProtection.get_csrf_token() |> Poison.encode! %>;
+
+    function openCategoryMegaMenu(){
+        document.querySelector(".category-mega-menu").classList.toggle("is-hidden");
+    }
+
+    function selectCategory(category){
+        document.querySelector(".select.category span").innerText = category.name;
+        document.querySelector("input[name='c']").value = category.uuid;
+        document.querySelector(".category-mega-menu").classList.toggle("is-hidden");
+    }
+
+    // document.querySelector(".select.category").addEventListener("click", function(){
+        
+    // })
+</script>
+<script type="text/x-template" id="imagePreviewTemplate">
+    <div class="field is-horizontal">
+        <div class="field-label">
+            <input type="text" hidden :name="inputValue">
+        </div>
+        <div class="field-body">
+            <div class="column is-12">
+                <div class="box" style="padding: .25rem; border-radius: 3px; position: relative;">
+                    <a v-if="showDelete" @click="remove" class="delete"></a>
+                    <article class="media">
+                        <div class="media-left">
+                            <div class="ad-image-preview-wrapper">
+                                <img v-if="inProgress || success" :src="thumbnail">
+                                <a style="border: none; background: transparent;" @click="retry" v-if="failed" class="button is-small">
+                                    <span class="icon is-large">
+                                        <i style="color: #77829d;" class="fa fa-refresh"></i>
+                                    </span>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="media-content" style="height: 64px; display: flex; flex-direction: column; justify-content: center;">
+                            <progress style="border-radius: 3px;" :class="['progress', 'is-small', progressClass]" :value="progressPercentage" max="100">15%</progress>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+<script type="text/x-template" id="sessionImageTemplate">
+    <div class="field is-horizontal">
+        <div class="field-label">
+            <input type="text" hidden :name="inputValue">
+        </div>
+        <div class="field-body">
+            <div class="column is-12">
+                <div class="box" style="padding: .25rem; border-radius: 3px; position: relative;">
+                    <a @click="remove" class="delete"></a>
+                    <article class="media">
+                        <div class="media-left">
+                            <div class="ad-image-preview-wrapper">
+                                <img :src="imageUrl">
+                            </div>
+                        </div>
+                        <div class="media-content" style="height: 64px; display: flex; flex-direction: column; justify-content: center;">
+                            <progress style="border-radius: 3px;" class="progress is-small is-success" value="100" max="100"></progress>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intro.js/2.5.0/intro.min.js"></script>
+<script src="<%= static_path(@conn, "/js/create.js") %>"></script>
+<script>
+    function createCookie(name,value,days) {
+        if (days) {
+            var date = new Date();
+            date.setTime(date.getTime()+(days*24*60*60*1000));
+            var expires = "; expires="+date.toGMTString();
+        }
+        else var expires = "";
+        document.cookie = name+"="+value+expires+"; path=/";
+    }
+
+    function readCookie(name) {
+        var nameEQ = name + "=";
+        var ca = document.cookie.split(';');
+        for(var i=0;i < ca.length;i++) {
+            var c = ca[i];
+            while (c.charAt(0)==' ') c = c.substring(1,c.length);
+            if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+        }
+        return null;
+    }
+
+    function eraseCookie(name) {
+        createCookie(name,"",-1);
+    }
+
+    var introOptions = {
+        'nextLabel': 'suivant',
+        'prevLabel': 'précédent',
+        'doneLabel': 'terminé',
+        'skipLabel': 'laisser tomber',
+        'overlayOpacity': '0.5',
+        'showStepNumbers': false,
+        'showBullets': false,
+        'scrollToElement': true,
+        'exitOnOverlayClick': false,
+        'hidePrev': true,
+        'hideNext': true
+    };
+    var introObj = introJs().setOptions(introOptions);
+    introObj.onexit(function(){
+        console.log("cookies exit");
+        createCookie("already", true);
+    });
+    introObj.oncomplete(function(){
+        console.log("cookies done");
+        createCookie("already", true);
+    });
+
+    var already = readCookie("already");
+    if(!already){
+        eraseCookie("already");
+        introObj.start();
+    }
+    console.log("cookies", already);
+
+    var showHelpButton = document.querySelector('.show-help');
+    showHelpButton.addEventListener('click', function(){
+        introObj.start();
+    });
+</script>

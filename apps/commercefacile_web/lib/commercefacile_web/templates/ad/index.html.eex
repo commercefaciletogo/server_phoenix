@@ -1,0 +1,195 @@
+<section class="section" style="padding-top: 0; padding-bottom: 2rem;">
+    <div class="container">
+        <div class="columns">
+            <div class="column">
+                <form action="">
+                    <div class="columns is-hidden-tablet">
+                        <div class="column is-one-quarter">
+                            <div class="field">
+                                <p class="control is-expanded">
+                                    <span class="select is-fullwidth">
+                                        <select name="l">
+                                            <optgroup label="Toutes villes">
+                                                <option value="">Toutes villes</option>
+                                            </optgroup>
+                                            <%= render_many @locations, Commercefacile.Web.AdView, "_categories_dropdown_menu_item.html", assigns %>
+                                        </select>
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="column is-one-quarter">
+                            <div class="field">
+                                <p class="control is-expanded">
+                                    <span class="select is-fullwidth">
+                                        <select name="c">
+                                            <optgroup label="Toutes categories">
+                                                <option value="">Toutes categories</option>
+                                            </optgroup>
+                                            <%= render_many @categories, Commercefacile.Web.AdView, "_categories_dropdown_menu_item.html", assigns %>
+                                        </select>
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="column is-one-quarter">
+                            <div class="field is-fullwidth has-addons">
+                                <p class="control is-expanded">
+                                    <input class="input is-fullwidth" name="q" required type="search" placeholder="Quest ce que recherchez vous?">
+                                </p>
+                            </div>
+                        </div>
+                        <div class="column is-one-quarter">
+                            <div class="field is-fullwidth has-addons">
+                                <p class="control is-expanded">
+                                    <button type="submit" class="button is-fullwidth search">
+                                        RECHERCHER
+                                    </button>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <div class="columns is-hidden-desktop is-hidden-mobile">
+                    <div class="column">
+                        <form action="">
+                            <div class="field has-addons">
+                                <p class="control" style="width: 25%;">
+                                    <span class="select" style="width: 100%;">
+                                        <select name="l" style="width: 100%;">
+                                            <optgroup label="Toutes villes">
+                                                <option value="">Toutes villes</option>
+                                            </optgroup>
+                                            <%= render_many @locations, Commercefacile.Web.AdView, "_categories_dropdown_menu_item.html", assigns %>
+                                        </select>
+                                    </span>
+                                </p>
+                                <p class="control" style="width: 25%;">
+                                    <span class="select" style="width: 100%;">
+                                        <select class="is-hidden-desktop" name="c" style="width: 100%;">
+                                            <optgroup label="Toutes categories">
+                                                <option value="">Toutes categories</option>
+                                            </optgroup>
+                                            <%= render_many @categories, Commercefacile.Web.AdView, "_categories_dropdown_menu_item.html", assigns %>
+                                        </select>
+                                    </span>
+                                </p>
+                                <p class="control is-expanded">
+                                    <input name="q" class="input" required type="search" placeholder="Quest ce que recherchez vous?">
+                                </p>
+                                <p class="control">
+                                    <button type="submit" class="button is-fullwidth search">
+                                        RECHERCHER
+                                    </button>
+                                </p>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="columns is-multiline is-hidden-touch">
+                    <div class="is-hidden-touch column is-10-desktop is-offset-1-desktop" style="position: relative; padding-top: 0;">
+                        <div class="is-hidden category-mega-menu" style="border: 1px solid #e8eaee; padding: .25rem; border-radius: 3px; z-index: 100; min-width: 88%; background-color: whitesmoke; height: auto; position: absolute; top: 70px;">
+                            <%= render(Commercefacile.Web.AdView, "_categories_mega_menu.html", assigns) %>
+                        </div>  
+                    </div>
+                    <div class="column is-10-desktop is-offset-1-desktop">
+                        <form action="">
+                            <div class="field has-addons">
+                                <p class="control" style="width: 25%;">
+                                    <span class="select" style="width: 100%;">
+                                        <select name="l" style="width: 100%;">
+                                            <optgroup label="Toutes villes">
+                                                <option value="">Toutes villes</option>
+                                            </optgroup>
+                                            <%= render_many @locations, Commercefacile.Web.AdView, "_categories_dropdown_menu_item.html", assigns %>
+                                        </select>
+                                    </span>
+                                </p>
+                                <p class="control" style="width: 25%;">
+                                    <span class="select category" style="white-space: nowrap;
+                                                                        overflow: hidden;
+                                                                        text-overflow: ellipsis; 
+                                                                        padding: 6px 30px 6px 10px; 
+                                                                        width: 100%; 
+                                                                        border: 1px solid;">
+                                        <input type="text" hidden name="c">
+                                        <span>Toutes Categories</span>
+                                    </span>
+                                </p>
+                                <p class="control is-expanded">
+                                    <input name="q" class="input" required type="search" placeholder="Quest ce que recherchez vous?">
+                                </p>
+                                <p class="control">
+                                    <button type="submit" class="button is-fullwidth search">
+                                        RECHERCHER
+                                    </button>
+                                </p>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section" style="padding-top: 0; padding-bottom: 2rem;">
+    <div class="container">
+        <div class="columns">
+            <div class="column">
+                <div class="columns is-hidden-mobile">
+                    <div class="column is-8-desktop is-offset-2-desktop">
+                         <div class="columns">
+                             <div class="column is-3">
+                                <a href="<%= ad_path @conn, :index %>" class="button is-outlined is-fullwidth all">Toutes Annonces</a>
+                            </div>
+                            <div class="column is-5">
+                                <div class="content">
+                                    <blockquote style="border-radius: 3px; padding: .35em;"><span>3000</span> Annonces</blockquote>
+                                </div>
+                            </div>
+                            <div class="column is-4">
+                                <div class="field">
+                                    <p class="control is-expanded">
+                                        <span class="select is-fullwidth">
+                                            <select class="filter">
+                                                <option value="d|desc">Trier par: Annonce Recente</option>
+                                                <option value="d|asc">Trier par: Annonce Ancienne</option>
+                                                <option value="p|asc">Trier par: Prix Croissant</option>
+                                                <option value="p|desc">Trier par: Prix Decroissant</option>
+                                            </select>
+                                        </span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section" style="padding-top: 0;">
+    <div class="container">
+        <div class="columns">
+            <div class="column is-3-desktop is-hidden-touch">
+                <!--Advertisment-->
+            </div>
+            <div class="column is-6-desktop is-9-tablet">
+
+                <%= render_many 1..15, Commercefacile.Web.AdView, "ad.html", assigns %>
+                
+                <div>
+                    <nav class="pagination is-centered is-small">
+                        <a class="pagination-previous">Precedente</a>
+                        <a class="pagination-next">Suivante</a>
+                    </nav>
+                </div>                
+            </div>
+            <div class="column is-3-desktop is-3-tablet is-hidden-mobile">
+               <!--Advertisment-->
+            </div>
+        </div>
+    </div>
+</section>

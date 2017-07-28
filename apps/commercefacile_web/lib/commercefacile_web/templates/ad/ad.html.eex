@@ -1,0 +1,25 @@
+<a href="<%= ad_path(@conn, :show, "fjakdfjalsdjkfalkdf") %>" class="box ad-container">
+    <article class="media" style="position: relative;">
+        <div class="media-left">
+            <div class="ad-thumbnails-image-wrapper">
+                <!--<img src="http://www.lorempixel.com/700/500" alt="">-->
+            </div>
+        </div>
+        <div class="media-content">
+            <div class="content ad-title">
+                Titre de l'annonce est vraiment long et
+            </div>
+            <div class="content is-small">
+                <p class="ad-category">
+                    Category de l'annonce > sub category
+                </p>
+            </div>
+            <div class="content">
+                <p class="ad-price">
+                    <strong> <%= @ad %> </strong>  <span>F CFA</span> 
+                </p>
+            </div>
+        </div>
+        <small class="time">31m</small>
+    </article>
+</a>

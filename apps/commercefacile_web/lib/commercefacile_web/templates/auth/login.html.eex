@@ -1,0 +1,44 @@
+<%= flash? @conn %>
+
+<section class="section" style="padding-top: 0;">
+    <div class="container">
+        <div class="columns">
+            <div class="column is-4 is-offset-4">
+                <%= form_for @changeset, auth_path(@conn, :post_login), [as: :login], fn f -> %>   
+                    <div class="field">
+                        <label class="label">Numero de telephone</label>
+                        <p class="control has-icons-left has-icons-right">
+                            <%= input f, :phone, class: "input", required: true, using: :telephone_input %>
+                            <%= make_icon "fa fa-phone" %>
+                        </p>
+                        <%= make_help f, :phone, "example: +228 999 99 99" %>
+                    </div>
+
+                    <div class="field">
+                        <label class="label">Mot de passe</label>
+                        <p class="control has-icons-left has-icons-right">
+                            <%= input f, :password, class: "input", required: true, using: :password_input %>
+                            <%= make_icon "fa fa-lock" %>
+                        </p>
+                        <%= make_help f, :password %>
+                    </div>
+
+                    <div class="field">
+                        <p class="control is-expanded">
+                            <button class="button submit is-fullwidth">Se connecter</button>
+                        </p>
+                    </div>
+                <% end %>
+
+                <hr>
+                <div class="has-text-centered">
+                    <a href="<%= auth_path @conn, :get_verify %>">Mot de passe oublie</a>
+                </div>
+                
+
+                <hr>
+                <a href="<%= auth_path @conn, :get_register %>" class="button submit is-fullwidth">S'enregistrer</a>
+            </div>
+        </div>
+    </div>
+</section>

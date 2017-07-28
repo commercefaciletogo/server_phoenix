@@ -1,0 +1,5 @@
+ /*<%= for region <- regions @conn do %>
+    <a id="<%= region.uuid %>" xlink:href="link_to_ads_page_with({:location, region.uuid})" data-info="{"uuid": "<%= region.uuid %>"}">
+      <path id="<%= region.uuid %>" onclick="handleClick('<%= region.uuid %>')" class="region" d="<%= region.map_data %>"/>
+    </a>
+  <% end %>*/

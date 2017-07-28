@@ -1,0 +1,33 @@
+<style type="text/css">
+    .is-outlined{
+        background-color: transparent;
+        border-color: #1D305D;
+        color: #1D305D;
+        transition: all .5s;
+    }
+
+    .is-main{
+        border-color: #1D305D;
+        color: #fff;
+        background: #1D305D;
+        transition: all .5s;
+    }
+
+    .is-outlined:hover, .is-main:hover{
+        color: #fff;
+        background: #77829d;
+    }
+
+    aside .menu-label{
+        color: #4a597d;
+    }
+
+    aside .menu-list a{
+        color: #1D305D;
+        transition: all .5s;
+    }
+    aside .menu-list a:hover{
+        color: #1D305D;
+        background-color: #F79520;
+    }
+</style>

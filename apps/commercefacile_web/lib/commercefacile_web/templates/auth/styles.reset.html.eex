@@ -1,0 +1,29 @@
+<style>
+    .button.submit{
+        color: white;
+        background: #33446d;
+        border-color: #33446d;
+        transition: all .3s;
+    }
+    .button.submit:hover{
+        background: #1d305d;
+        border-color: #1d305d;
+    }
+
+    .input{
+        box-shadow: none;
+    }
+
+    .input{
+        transition: all .3s;
+        border-color: #33446;
+        color: #33446d;
+    }
+    .input:active, .input:focus{
+        border-color: #33446d;
+    }
+    .label{
+        color: #33446d;
+        font-weight: normal;
+    }
+</style>

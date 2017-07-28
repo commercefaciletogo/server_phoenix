@@ -1,0 +1,18 @@
+<section class="section" style="padding-top: 0;">
+    <div class="container">
+        <div class="columns">
+            <div class="column is-8-desktop is-offset-2-desktop">
+                <%= render "menu.html", assigns %>
+
+                <%= render_many 1..5, Commercefacile.Web.UserView, "_shop_ad.html", assigns %>
+
+                <div style="margin-top: 20px;">
+                    <nav class="pagination is-centered is-small">
+                        <a class="pagination-previous">Precedente</a>
+                        <a class="pagination-next">Suivante</a>
+                    </nav>
+                </div>  
+            </div>
+        </div>
+    </div>
+</section>

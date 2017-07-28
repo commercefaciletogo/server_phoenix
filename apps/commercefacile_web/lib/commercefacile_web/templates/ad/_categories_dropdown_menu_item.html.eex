@@ -1,0 +1,3 @@
+<optgroup label="<%= @ad.name %>">
+    <%= render_many @ad.subs, Commercefacile.Web.AdView, "_categories_dropdown_menu_sub_item.html", assigns %>    
+</optgroup>

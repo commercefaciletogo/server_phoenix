@@ -1,0 +1,7 @@
+<% name = String.replace(@ad.name, "'", "\\'") %>
+<aside class="menu">
+    <ul class="menu-list">
+        <li><a onclick="selectCategory({name: '<%= name %>', uuid: '<%= raw @ad.uuid %>'})" class="is-active"><%= @ad.name %></a></li>
+        <%= render_many(@ad.subs, Commercefacile.Web.AdView, "_categories_mega_menu_sub_item.html", assigns) %>
+    </ul>
+</aside>

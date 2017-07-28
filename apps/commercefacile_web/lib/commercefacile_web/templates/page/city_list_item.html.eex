@@ -1,0 +1,1 @@
+<li><a href="<%= ad_path_from_home(@conn, @page.uuid, :location) %>"><%= @page.name %></a></li>

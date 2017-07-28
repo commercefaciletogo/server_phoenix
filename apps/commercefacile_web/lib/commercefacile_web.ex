@@ -39,6 +39,10 @@ defmodule Commercefacile.Web do
       import Commercefacile.Web.Router.Helpers
       import Commercefacile.Web.ErrorHelpers
       import Commercefacile.Web.Gettext
+
+      import PhoenixActiveLink
+      import Commercefacile.Web.InputHelpers
+      import Commercefacile.Web.FlashHelpers
     end
   end
 

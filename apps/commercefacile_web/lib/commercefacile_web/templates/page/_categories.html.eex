@@ -1,0 +1,8 @@
+<section class="hero is-hidden-mobile" style="background-color: #e8eaee; border-top: rgb(209, 213, 222) 2px solid;">
+    <div class="hero-body">
+        <div class="container">
+            <div class="columns is-multiline">
+                <%= render_many @categories, Commercefacile.Web.PageView, "_category.html", assigns %>
+        </div>
+    </div>
+</section>

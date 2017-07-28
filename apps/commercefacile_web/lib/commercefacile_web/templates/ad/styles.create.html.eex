@@ -1,0 +1,110 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intro.js/2.5.0/introjs.min.css">
+<style>
+    .ad-image-preview-wrapper{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: whitesmoke;
+        width: 64px;
+        height: 64px;
+    }
+    .ad-image-preview-wrapper img {
+        max-width: 100% !important;
+        max-height: 100% !important;
+        display: block !important;
+        margin: 0 auto !important;
+    }
+
+    a.delete{
+        position: absolute; 
+        top: -5px; 
+        right: -5px;
+        transition: all .5s;
+    }
+    a.delete:hover{
+         background: #ff3860;
+    }
+
+    .progress.is-busy::-webkit-progress-value {
+        background-color: #77829d;
+    }
+
+    .progress.is-busy::-moz-progress-bar {
+        background-color: #77829d;
+    }
+
+    .button.is-primary.is-outlined {
+        background-color: transparent;
+        border-color: #d1d5de;
+        color: #606e8d;
+        transition: all .3s;
+    }
+    .button.is-primary.is-outlined:hover{
+        background-color: #f9b462;
+        color: #606e8d;
+        border-color: #f9b462;
+    }
+
+    .button.submit, .button.show-help{
+        color: white;
+        background: #33446d;
+        border-color: #33446d;
+        transition: all .3s;
+    }
+    .button.submit:hover, .button.show-help:hover{
+        background: #1d305d;
+        border-color: #1d305d;
+    }
+    .button.submit[disabled]{
+        background: #33446d;
+    }
+
+    .label, .radio{
+        color: #606e8d;
+        font-weight: normal;
+    }
+
+    .content blockquote{
+        padding: .25em;
+        color: #33446d;
+        font-weight: bold;
+    }
+
+    input, .input, 
+    textarea.textarea, 
+    .select select,
+    .select::after, 
+    .button.is-static{
+        border-color: #d1d5de;
+        box-shadow: none;
+        color: #606e8d
+    }
+    .input:active, .input:focus, 
+    textarea.textarea:active, textarea.textarea:focus,
+    .select select:active, .select select:focus{
+        border-color: #f9b462 !important;
+    }
+
+    .menu {
+        font-size: .8rem;
+    }
+
+    .menu:last-of-type{
+        margin-top: 5px;
+    }
+
+    .menu-list .is-active{
+        background: #606e8d !important;
+        color: whitesmoke !important;
+    }
+    .menu-list .is-active:hover{
+        text-decoration: underline;
+    }
+    .menu .menu-list a{
+        color: #606e8d;
+        transition: all .1s;
+    }
+    .menu .menu-list a:hover{
+        color: #f79f36;
+    }
+</style>

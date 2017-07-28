@@ -1,0 +1,251 @@
+<%= flash? @conn %>
+
+<section class="section" style="padding-top: 0;">
+  <div class="container">
+    <div class="columns">
+        <div class="column is-one-thirds-desktop is-hidden-touch">
+            
+        </div>
+        <div class="column is-half-desktop is-two-thirds-tablet">
+            <%= form_for @changeset, ad_path(@conn, :save), [as: :ad], fn f -> %>
+                <div data-intro="Informations De L'annonce" data-step="1" class="content" style="margin-bottom: 10px;">
+                    <blockquote>Informations De L'annonce</blockquote>
+                </div>
+
+                <div id="adImages" class="field">
+                    <div v-if="moreImages" class="field is-horizontal" data-intro="Ajouter une image" data-step="2">
+                        <div class="field-label is-normal">
+                            <label class="label">Image(s)</label>
+                        </div>
+                        <div class="field-body">
+                            <div class="field">
+                                <div class="control">
+                                    <input @change="addImage" id="adImageInput" accept="image/jpg, image/jpeg" type="file" class="custom" style="display: none;">
+                                    <label  for="adImageInput" class="button is-primary is-outlined is-fullwidth" style="cursor: pointer;">
+                                        Ajouter une image
+                                    </label>
+                                </div>
+                                <%= make_help f, :images %>
+                            </div>
+                        </div>
+                    </div>
+
+                    <s-i v-for="url in sessionImages" :key="url" :url="url" @busy="updateSubmissionStatus" @remove="removeImage"></s-i>
+
+                    <i-u-p v-for="image in images" :key="image.name" :image="image" @busy="updateSubmissionStatus" @remove="removeImage"></i-u-p>
+                </div>
+
+                <div class="field is-horizontal">
+                    <div class="field-label is-normal">
+                        <label class="label">Titre</label>
+                    </div>
+                    <div class="field-body">
+                        <div class="field">
+                            <p class="control is-expanded has-icons-right">
+                                <%= input f, :title, class: "input", required: true %>
+                            </p>
+                            <%= make_help f, :title %>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="field is-horizontal">
+                    <div class="field-label is-normal">
+                        <label class="label">Categorie</label>
+                    </div>
+                    <div class="field-body">
+                        <div class="field">
+                            <p class="control is-expanded">
+                                <div class="select is-fullwidth">
+                                    <%= select f, :category, @categories, prompt: "Choisir une categorie" %>
+                                </div>
+                            </p>
+                            <%= make_help f, :category %>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="field is-horizontal">
+                    <div class="field-label is-normal">
+                        <label class="label">Condition</label>
+                    </div>
+                    <div class="field-body">
+                        <div class="field is-narrow">
+                            <div class="control">
+                                <div class="select is-fullwidth">
+                                    <%= select f, :condition, @conditions %>
+                                </div>
+                            </div>
+                            <%= make_help f, :condition %>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="field is-horizontal">
+                    <div class="field-label is-normal">
+                        <label class="label">Description</label>
+                    </div>
+                    <div class="field-body">
+                        <div class="field">
+                            <div class="control">
+                                <%= input f, :description, class: "textarea", required: true, using: :textarea %>
+                            </div>
+                            <%= make_help f, :description %>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="field is-horizontal">
+                    <div class="field-label is-normal">
+                        <label class="label">Prix</label>
+                    </div>
+                    <div class="field-body">
+                        <div class="field has-addons">
+                            <p class="control">
+                                <%= input f, :price, class: "input", required: true %>
+                            </p>
+                            <p class="control">
+                                <a class="button is-static">
+                                    FCFA
+                                </a>
+                            </p>
+                            <%= make_help f, :price %>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="field is-horizontal">
+                    <div class="field-label">
+                        <label class="label">Negotiable?</label>
+                    </div>
+                    <div class="field-body">
+                        <div class="field is-narrow">
+                            <div class="control">
+                                <label class="radio">
+                                    <%= radio_button f, :negotiable, true %>
+                                    Yes
+                                </label>
+                                <label class="radio">
+                                    <%= radio_button f, :negotiable, false %>
+                                    No
+                                </label>
+                            </div>
+                            <%= make_help f, :negotiable %>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content" style="margin-top: 50px; margin-bottom: 10px;">
+                    <blockquote>Vos Informations</blockquote>
+                </div>
+
+                <div class="field is-horizontal">
+                    <div class="field-label is-normal">
+                        <label class="label">Nom</label>
+                    </div>
+                    <div class="field-body">
+                        <div class="field">
+                            <p class="control is-expanded has-icons-right">
+                                <input class="input" type="text">
+                                <span class="icon is-small is-right">
+                                    <i class="fa fa-check"></i>
+                                </span>
+                            </p>
+                            <!--<p class="help is-success">This email is correct</p>-->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="field is-horizontal">
+                    <div class="field-label is-normal">
+                        <label class="label">Numero de telephone</label>
+                    </div>
+                    <div class="field-body">
+                        <div class="field">
+                            <p class="control is-expanded has-icons-right">
+                                <input class="input" type="text">
+                                <span class="icon is-small is-right">
+                                    <i class="fa fa-check"></i>
+                                </span>
+                            </p>
+                            <!--<p class="help is-success">This email is correct</p>-->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="field is-horizontal">
+                    <div class="field-label is-normal">
+                        <label class="label">Mot de passe</label>
+                    </div>
+                    <div class="field-body">
+                        <div class="field">
+                            <p class="control is-expanded has-icons-right">
+                                <input class="input" type="password">
+                                <span class="icon is-small is-right">
+                                    <i class="fa fa-check"></i>
+                                </span>
+                            </p>
+                            <!--<p class="help is-success">This email is correct</p>-->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="field is-horizontal">
+                    <div class="field-label is-normal">
+                        <label class="label">Confirmer le mot de passe</label>
+                    </div>
+                    <div class="field-body">
+                        <div class="field">
+                            <p class="control is-expanded has-icons-right">
+                                <input class="input" type="password">
+                                <span class="icon is-small is-right">
+                                    <i class="fa fa-check"></i>
+                                </span>
+                            </p>
+                            <!--<p class="help is-success">This email is correct</p>-->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="field is-horizontal">
+                    <div class="field-label is-normal">
+                        <label class="label">Lieu</label>
+                    </div>
+                    <div class="field-body">
+                        <div class="field">
+                            <div class="control is-expanded">
+                                <div class="select is-fullwidth">
+                                    <%= select f, :location, @locations, prompt: "Choisir votre lieu" %>
+                                </div>
+                            </div>
+                            <!--<p class="help is-success">This email is correct</p>-->
+                        </div>
+                    </div>
+                </div>
+
+                
+                <div class="field is-horizontal">
+                    <div class="field-label">
+                        <!-- Left empty for spacing -->
+                    </div>
+                    <div class="field-body">
+                        <div class="field">
+                            <div class="control">
+                                <button :disabled="busy || noImage" type="submit" class="button is-primary is-fullwidth submit">
+                                    Depozer votre annonce >>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            <% end %>
+        </div>
+        <div class="column is-one-thirds-desktop is-one-thirds-tablet is-hidden-mobile">
+            <button class="button is-primary is-fullwidth show-help">
+                Comment deposer une annonce?
+            </button>
+        </div>
+    </div>
+  </div>
+</section>

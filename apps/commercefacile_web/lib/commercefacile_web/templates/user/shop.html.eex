@@ -1,0 +1,117 @@
+<section class="section" style="padding-top: 0; padding-bottom: 1rem;">
+    <div class="container">
+        <div class="columns">
+            <div class="column is-8-tablet is-offset-2-tablet">
+                <article class="media">
+                    <figure class="media-left">
+                        <p class="image is-64x64">
+                            <img src="http://bulma.io/images/placeholders/128x128.png">
+                        </p>
+                    </figure>
+                    <div class="media-content">
+                        <div class="content">
+                            <p>
+                                <strong>John Smith</strong> <small>@johnsmith</small> <small>31m</small>
+                            </p>
+                        </div>
+                        <div class="content is-small">
+                            <p>
+                                <strong>John Smith</strong> <small>@johnsmith</small> <small>31m</small>
+                            </p>
+                        </div>
+                        <!--<nav class="level is-mobile">
+                        <div class="level-left">
+                            <a class="level-item">
+                            <span class="icon is-small"><i class="fa fa-reply"></i></span>
+                            </a>
+                            <a class="level-item">
+                            <span class="icon is-small"><i class="fa fa-retweet"></i></span>
+                            </a>
+                            <a class="level-item">
+                            <span class="icon is-small"><i class="fa fa-heart"></i></span>
+                            </a>
+                        </div>
+                        </nav>-->
+                    </div>
+                    <div class="media-right">
+                        <a class="level-item">
+                            <span class="icon is-big"><i class="fa fa-facebook"></i></span>
+                        </a>
+                        <a class="level-item">
+                            <span class="icon is-big"><i class="fa fa-twitter"></i></span>
+                        </a>
+                        <a class="level-item is-hidden-touch">
+                            <span class="icon is-big"><i class="fa fa-clone"></i></span>
+                        </a>
+                        <a class="level-item is-hidden-desktop">
+                            <span class="icon is-big"><i class="fa fa-whatsapp"></i></span>
+                        </a>
+                    </div>
+                    </article>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section" style="padding-top: 0; padding-bottom: 1rem;">
+    <div class="container">
+        <div class="columns">
+            <div class="column is-8-desktop is-12-tablet is-offset-2-desktop">
+                <div class="columns">
+                    <div class="column is-8">
+                        <div class="field has-addons">
+                            <p class="control is-expanded">
+                                <input class="input" type="text" placeholder="Quest ce que recherchez vous?">
+                            </p>
+                            <p class="control">
+                                <a class="button search">
+                                    RECHERCHER
+                                </a>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="column is-4">
+                        <div class="field">
+                            <p class="control is-expanded">
+                                <span class="select is-fullwidth">
+                                    <select>
+                                        <option>Trier par: Date</option>
+                                        <option>Trier par: Prix</option>
+                                    </select>
+                                </span>
+                            </p>
+                        </div>
+                    </div>
+                </div>             
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section" style="padding-top: 0;">
+    <div class="container">
+        <div class="columns">
+            <div class="column is-3-desktop is-hidden-touch">
+                <!--<button class="button is-primary is-fullwidth show-help">
+                    Comment deposer une annonce?
+                </button>-->
+            </div>
+            <div class="column is-6-desktop is-8-tablet">
+                
+                <%= render_many 1..5, Commercefacile.Web.UserView, "_shop_ad.html", assigns %>
+                
+                <div>
+                    <nav class="pagination is-centered is-small">
+                        <a class="pagination-previous">Precedente</a>
+                        <a class="pagination-next">Suivante</a>
+                    </nav>
+                </div>                
+            </div>
+            <div class="column is-3-desktop is-3-tablet is-hidden-mobile">
+                <!--<button class="button is-primary is-fullwidth show-help">
+                    Comment deposer une annonce?
+                </button>-->
+            </div>
+        </div>
+    </div>
+</section>

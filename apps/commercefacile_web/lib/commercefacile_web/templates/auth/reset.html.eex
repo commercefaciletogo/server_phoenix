@@ -1,0 +1,35 @@
+<%= flash? @conn %>
+
+<section class="section" style="padding-top: 0;">
+    <div class="container">
+        <div class="columns">
+            <div class="column is-4 is-offset-4">
+                <%= form_for @changeset, auth_path(@conn, :post_reset), [as: :reset], fn f -> %>
+                    <div class="field">
+                        <label class="label">Mot de passe</label>
+                        <p class="control has-icons-left">
+                            <%= input f, :password, class: "input", required: true, using: :password_input %>
+                            <%= make_icon "fa fa-lock" %>
+                        </p>
+                        <%= make_help f, :password %>
+                    </div>
+
+                    <div class="field">
+                        <label class="label">Comfirmez le mot de passe</label>
+                        <p class="control has-icons-left">
+                            <%= input f, :password_confirmation, class: "input", required: true, using: :password_input %>
+                            <%= make_icon "fa fa-lock" %>
+                        </p>
+                        <%= make_help f, :password_confirmation %>
+                    </div>
+
+                    <div class="field">
+                        <p class="control is-expanded">
+                            <button class="button submit is-fullwidth">Réinitialiser mot de passe</button>
+                        </p>
+                    </div>
+                <% end %>
+            </div>
+        </div>
+    </div>
+</section>

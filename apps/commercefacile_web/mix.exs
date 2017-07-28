@@ -21,7 +21,7 @@ defmodule Commercefacile.Web.Mixfile do
   # Type `mix help compile.app` for more information.
   def application do
     [mod: {Commercefacile.Web.Application, []},
-     extra_applications: [:logger, :runtime_tools, :geoip]]
+     extra_applications: [:logger, :runtime_tools]]
   end
 
   # Specifies which paths to compile per environment.
@@ -32,16 +32,25 @@ defmodule Commercefacile.Web.Mixfile do
   #
   # Type `mix help deps` for examples and options.
   defp deps do
-    [{:phoenix, "~> 1.3.0-rc"},
+    [{:phoenix, "~> 1.3.0-rc", override: true},
      {:phoenix_pubsub, "~> 1.0"},
      {:phoenix_ecto, "~> 3.2"},
      {:phoenix_html, "~> 2.6"},
      {:phoenix_live_reload, "~> 1.0", only: :dev},
      {:gettext, "~> 0.11"}, 
-     {:commercefacile, in_umbrella: true}, 
+     {:cowboy, "~> 1.0"},
+     {:curtail, "~> 0.1.1"},
+     {:remodel, "~> 0.0.4"},
+     {:guardian, "~> 0.14.5"},
+     {:navigation_history, "~> 0.2.2"},
+     {:phoenix_active_link, "~> 0.0.1"},
+     {:phoenix_html_simplified_helpers, "~> 1.2"},
+     {:commercefacile, in_umbrella: true},
+     {:commercefacile_admin, in_umbrella: true}, 
      {:junit_formatter, ">= 0.0.0", only: :test},
-     {:geoip, "~> 0.1"},
-     {:cowboy, "~> 1.0"}]
+     {:doc_first_formatter, "~> 0.0.1", only: :test},
+     {:mix_test_watch, "~> 0.3", only: :dev, runtime: false, override: true},
+     {:ex_unit_notifier, "~> 0.1", only: :test}]
   end
 
   # Aliases are shortcuts or tasks specific to the current project.

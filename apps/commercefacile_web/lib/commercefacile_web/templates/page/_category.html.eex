@@ -1,0 +1,11 @@
+<div class="column is-3 has-text-centered">
+    <a href="<%= ad_path_from_home @conn, @page.uuid, :category %>">
+        <figure class="image is-32x32" style="display: inline-block;">
+            <img src="<%= @page.icon %>">
+        </figure>
+        <p class="title is-5"><%= @page.name %></p>
+    </a>
+    <p>
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+    </p>
+</div>

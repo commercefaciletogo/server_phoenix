@@ -1,0 +1,28 @@
+<div class="tabs is-centered is-boxed">
+    <ul>
+        <li class="<%= active_if_current(@conn, to: user_path(@conn, :dashboard, "00228954786"), controller: Commercefacile.Web.UserController, action: :dashboard) %>">
+            <a href="<%= user_path @conn, :dashboard, "00228954786" %>">
+                <span class="icon is-small"><i class="fa fa-cubes"></i></span>
+                <span>Annonces</span>
+            </a>
+        </li>
+        <li class="<%= active_if_current(@conn, to: user_path(@conn, :favorites, "00228954786"), controller: Commercefacile.Web.UserController, action: :favorites) %>">
+            <a href="<%= user_path @conn, :favorites, "00228954786" %>">
+                <span class="icon is-small"><i class="fa fa-heart"></i></span>
+                <span>Annonces sauvegardées</span>
+            </a>
+        </li>
+        <li class="<%= active_if_current(@conn, to: user_path(@conn, :settings, "00228954786"), controller: Commercefacile.Web.UserController, action: :settings) %>">
+            <a href="<%= user_path @conn, :settings, "00228954786" %>">
+                <span class="icon is-small"><i class="fa fa-cogs"></i></span>
+                <span>Paramètres</span>
+            </a>
+        </li>
+        <li>
+            <a href="<%= user_path @conn, :shop, "00228954786" %>">
+                <span class="icon is-small"><i class="fa fa-home"></i></span>
+                <span>Boutique</span>
+            </a>
+        </li>
+    </ul>
+</div>

@@ -1,0 +1,6 @@
+<a xlink:href="<%= ad_path_from_home @conn, @page.uuid, :location %>">
+    <path 
+        id="<%= @page.uuid %>"
+        class="region" 
+        d="<%= @page.svg %>"/>
+</a>

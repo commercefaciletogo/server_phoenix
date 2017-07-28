@@ -1,0 +1,1 @@
+<option value="<%= @ad.uuid %>"><%= @ad.name %></option>

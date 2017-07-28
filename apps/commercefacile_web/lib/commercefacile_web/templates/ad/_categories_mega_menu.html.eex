@@ -1,0 +1,20 @@
+<% [first_categories | [second_categories | [third_categories | [fourth_categories]]]] = Enum.chunk(@categories, 3, 3, []) %>
+<div class="columns">
+    <div class="column is-3">
+        <aside style="margin-bottom: 5px;" class="menu">
+            <ul class="menu-list">
+                <li><a onclick="selectCategory({name: 'Toutes Categories', uuid: null})" class="is-active">Toutes Categories</a></li>
+            </ul>
+        </aside>
+        <%= render_many(first_categories, Commercefacile.Web.AdView, "_categories_mega_menu_item.html", assigns) %>
+    </div>
+    <div class="column is-3">
+        <%= render_many(second_categories, Commercefacile.Web.AdView, "_categories_mega_menu_item.html", assigns) %>
+    </div>
+    <div class="column is-3">
+        <%= render_many(third_categories, Commercefacile.Web.AdView, "_categories_mega_menu_item.html", assigns) %>
+    </div>
+    <div class="column is-3">
+        <%= render_many(fourth_categories, Commercefacile.Web.AdView, "_categories_mega_menu_item.html", assigns) %>
+    </div>
+</div>

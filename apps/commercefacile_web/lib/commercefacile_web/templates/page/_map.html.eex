@@ -1,0 +1,33 @@
+<svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" width="250" viewBox="0 0 300 684.2">
+  <style>
+    <![CDATA[
+      .region{
+        fill: #1D2F5D;
+        stroke: #FFFFFF;
+        stroke-width:2;
+        stroke-linejoin:round;
+        transition: all .5s;
+      } 
+      .region:hover{
+        fill: #F79520;
+        cursor: pointer
+      }
+    ]]>
+  </style>
+
+  <script type="text/javascript">
+    <![CDATA[
+      var handleClick = function(data){
+        console.log(data);
+      };
+      var handleMouseenter = function(data){
+        console.log(data);
+      };
+      var handleMouseout = function(data){
+        console.log(data);
+      };
+    ]]>
+  </script>
+
+  <%= render_many @map, Commercefacile.Web.PageView, "region.html", assigns %>
+</svg>

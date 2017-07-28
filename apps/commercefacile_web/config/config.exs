@@ -26,6 +26,13 @@ config :logger, :console,
 config :commercefacile_web, Commercefacile.Web.Gettext,
   default_locale: "fr"
 
+config :guardian, Guardian,
+  issuer: "Ryme",
+  ttl: { 30, :days },
+  allowed_drift: 2000,
+  secret_key: "iiNzVREwn8giC857eqZ55iDaet5sK2CVtMB7EcUYuDfgSSP2iK4PlNj7UNlndo8W",
+  serializer: Commercefacile.Web.Serializers.Guardian
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{Mix.env}.exs"

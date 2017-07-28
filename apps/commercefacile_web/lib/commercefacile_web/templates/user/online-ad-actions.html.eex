@@ -1,0 +1,14 @@
+<nav class="level">
+    <div class="level-left">
+        <a class="level-item tooltip" data-tooltip="Voir">
+            <span class="icon is-small"><i class="fa fa-eye"></i></span>
+        </a>
+        <a class="level-item tooltip" data-tooltip="Mettre hors ligne">
+            <span class="icon is-small"><i class="fa fa-undo"></i></span>
+        </a>
+        <a class="level-item tooltip" data-tooltip="Suprimer">
+            <span class="icon is-small"><i class="fa fa-trash"></i></span>
+        </a>
+        <a class="level-item is-hidden-tablet"></a>
+    </div>
+</nav>

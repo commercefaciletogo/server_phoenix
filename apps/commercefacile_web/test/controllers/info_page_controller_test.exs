@@ -1,28 +1,68 @@
 defmodule Commercefacile.Web.InfoPageControllerTest do
     use Commercefacile.Web.ConnCase
 
-    test "GET /help", %{conn: conn} do
-        conn = get conn, "/help"
-        assert html_response(conn, 200) =~ "help page"
+    test "GET /help" do
+        first_response = build_conn()
+                    |> get(info_page_path(build_conn(), :help))
+                    |> html_response(200)
+
+        second_response = build_conn()
+                    |> get("/help")
+                    |> html_response(200)
+
+        assert first_response =~ "help page"
+        assert second_response =~ "help page"
     end
 
-    test "GET /about", %{conn: conn} do
-        conn = get conn, "/about"
-        assert html_response(conn, 200) =~ "about page"
+    test "GET /about" do
+        first_response = build_conn()
+                    |> get(info_page_path(build_conn(), :about))
+                    |> html_response(200)
+
+        second_response = build_conn()
+                    |> get("/about")
+                    |> html_response(200)
+
+        assert first_response =~ "about page"
+        assert second_response =~ "about page"
     end
 
-    test "GET /contact", %{conn: conn} do
-        conn = get conn, "/contact"
-        assert html_response(conn, 200) =~ "contact page"
+    test "GET /contact" do
+        first_response = build_conn()
+                    |> get(info_page_path(build_conn(), :contact))
+                    |> html_response(200)
+
+        second_response = build_conn()
+                    |> get("/contact")
+                    |> html_response(200)
+
+        assert first_response =~ "contact page"
+        assert second_response =~ "contact page"
     end
 
-    test "GET /privacy", %{conn: conn} do
-        conn = get conn, "/privacy"
-        assert html_response(conn, 200) =~ "privacy page"
+    test "GET /privacy" do
+        first_response = build_conn()
+                    |> get(info_page_path(build_conn(), :privacy))
+                    |> html_response(200)
+
+        second_response = build_conn()
+                    |> get("/privacy")
+                    |> html_response(200)
+
+        assert first_response =~ "privacy page"
+        assert second_response =~ "privacy page"
     end
 
-    test "GET /terms", %{conn: conn} do
-        conn = get conn, "/terms"
-        assert html_response(conn, 200) =~ "terms page"
+    test "GET /terms" do
+        first_response = build_conn()
+                    |> get(info_page_path(build_conn(), :terms))
+                    |> html_response(200)
+
+        second_response = build_conn()
+                    |> get("/terms")
+                    |> html_response(200)
+
+        assert first_response =~ "terms page"
+        assert second_response =~ "terms page"
     end
 end

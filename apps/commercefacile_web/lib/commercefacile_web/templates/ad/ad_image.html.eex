@@ -1,0 +1,24 @@
+<div class="field is-horizontal">
+    <div class="field-label">
+        <input type="text" hidden name="images[<%= @url %>]">
+    </div>
+    <div class="field-body">
+        <div class="column is-12">
+            <div class="box" style="padding: .25rem; border-radius: 3px; position: relative;">
+                <a style="position: absolute; top: -5px; right: -5px;" class="delete is-danger"></a>
+                <article class="media">
+                    <div class="media-left">
+                        <div class="ad-image-preview-wrapper">
+                            <img src="<%= @url %>">
+                        </div>
+                    </div>
+                    <div class="media-content">
+                        <nav class="level is-mobile">
+                            <progress style="border-radius: 3px;" class="progress is-success is-small" value="100" max="100"></progress>
+                        </nav>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </div>
+</div>

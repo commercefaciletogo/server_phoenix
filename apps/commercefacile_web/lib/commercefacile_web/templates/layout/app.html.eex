@@ -2,15 +2,239 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <meta name="description" content="Vendez, achetez, louez et proposez vos services sur le plus grand site de petites annonces gratuites au Togo : immobilier, voiture, moto, etc.">
+    <meta name="author" content="@thomasdolar">
 
-    <title>Hello Commercefacile!</title>
+    <meta property="fb:app_id" content="173791383126653"/>
+    <meta name="twitter:site" content="@commercefacile">
+
+    <%= render_existing @view_module, "share-meta." <> @view_template, assigns %>
+
+    <%= render_existing @view_module, "title." <> @view_template, assigns %>
+
+    <title>Commercefacile.com</title>
+    
+    <link rel="stylesheet" href="<%= static_path(@conn, "/css/vendors/bulma.css") %>">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <style type="text/css">
+
+      body{
+        display: flex;
+        min-height: 100vh;
+        flex-direction: column;
+      }
+
+      .is-fixed-top{
+        position: fixed;
+        right: 0;
+        left: 0;
+        z-index: 1030;
+      }
+
+      a.nav-item{
+        color: white;
+        transition: all .5s;
+      }
+
+      .nav-menu a.nav-item{
+        color: #77829d;
+      }
+
+      a.nav-item:hover{
+        color: #77829d;
+        border-bottom-color: #77829d !important;
+      }
+
+      a.nav-item.is-tab.is-active, a.nav-item.is-tab.is-active:hover{
+        color: #1D305D;
+        border-bottom-color: #1D305D !important;
+        cursor: default;
+      }
+
+      .nav-toggle:hover{
+        background-color: inherit;
+      }
+
+      .nav-toggle.is-active{
+        background-color: #1D305D;
+      }
+      .nav-toggle.is-active span{
+        background-color: #F79520;
+      }
+
+      .footer .menu-label{
+          color: #4a597d;
+      }
+
+      .footer .menu-list a{
+          color: #1D305D;
+          transition: all .5s;
+      }
+      .footer .menu-list a:hover{
+          color: #F79520;
+          background-color: transparent;
+      }
+    </style>
+    <%= render_existing @view_module, "styles." <> @view_template, assigns %>
   </head>
 
   <body>
+
+        <!--start nav bar-->
+    <nav class="nav is-fixed-top" style="background: #F79520;">
+      <div class="container">
+        <div class="nav-left">
+          <a href="<%= page_path(@conn, :index) %>" class="nav-item">
+            <img src="<%= static_path(@conn, "/images/logos/logo_w_d_white.png") %>" alt="Commercefacile.com logo">
+          </a>
+        </div>
+        <div class="nav-center">
+          <a href="<%= page_path(@conn, :index) %>" 
+              class="nav-item is-tab is-hidden-mobile <%= active_if_current(@conn, to: page_path(@conn, :index), controller: Commercefacile.Web.PageController, action: :index) %>">
+            Acceuil
+          </a>
+          <a href="<%= ad_path(@conn, :create) %>" 
+            class="nav-item is-tab is-hidden-mobile <%= active_if_current(@conn, to: ad_path(@conn, :create), controller: Commercefacile.Web.AdController, action: :create) %>">
+            Déposer une annonce</a>
+          <a href="<%= ad_path(@conn, :index) %>" 
+            class="nav-item is-tab is-hidden-mobile <%= active_if_current(@conn, to: ad_path(@conn, :index), controller: Commercefacile.Web.AdController, action: [:index, :show]) %>">
+            Annonces</a>
+        </div>
+        <span class="nav-toggle">
+          <span></span>
+          <span></span>
+          <span></span>
+        </span>
+        <div class="nav-right nav-menu">
+          <a href="<%= page_path(@conn, :index) %>" 
+            class="nav-item is-tab is-hidden-tablet <%= active_if_current(@conn, to: page_path(@conn, :index), controller: Commercefacile.Web.PageController, action: :index) %>">
+            Acceuil</a>
+          <a href="<%= ad_path(@conn, :create) %>" 
+            class="nav-item is-tab is-hidden-tablet <%= active_if_current(@conn, to: ad_path(@conn, :create), controller: Commercefacile.Web.AdController, action: :create) %>">
+            Déposer une Annonce</a>
+          <a href="<%= ad_path(@conn, :index) %>" 
+            class="nav-item is-tab is-hidden-tablet <%= active_if_current(@conn, to: ad_path(@conn, :index), controller: Commercefacile.Web.AdController, action: [:index, :show]) %>">
+            Annonces</a>
+          <a href="<%= auth_path @conn, :get_login %>" class="nav-item is-tab">
+            <figure class="image is-16x16" style="margin-right: 8px;">
+              <img src="<%= static_path(@conn, "/images/icons/user.png") %>">
+            </figure>
+            Se connecter
+          </a>
+          <!--<a class="nav-item is-tab">Log out</a>-->
+        </div>
+      </div>
+    </nav>
+    <!--end nav bar-->
+
+  <!--start outer section-->
+  <div style="padding-top: 70px; flex: 1;">
+    <!--start main content-->
     <%= render @view_module, @view_template, assigns %>
+    <!--end main content-->
+  </div>
+  <!--end outer section-->
+
+      <!--start footer-->
+    <footer class="footer" style="background: #f8f8f9; border-top: 3px solid #1D305D;">
+      <div class="container">
+        <div class="columns">
+          <div class="column has-text-centered">
+            <p class="menu-label">
+              Transactions
+            </p>
+            <ul class="menu-list">
+              <li><a>Payments</a></li>
+              <li><a>Transfers</a></li>
+              <li><a>Balance</a></li>
+            </ul>
+          </div>
+          <div class="column has-text-centered">
+            <p class="menu-label">
+              Transactions
+            </p>
+            <ul class="menu-list">
+              <li><a>Payments</a></li>
+              <li><a>Transfers</a></li>
+              <li><a>Balance</a></li>
+            </ul>
+          </div>
+          <div class="column has-text-centered">
+            <p class="menu-label">
+              Transactions
+            </p>
+            <ul class="menu-list">
+              <li><a>Payments</a></li>
+              <li><a>Transfers</a></li>
+              <li><a>Balance</a></li>
+            </ul>
+          </div>
+          <div class="column has-text-centered">
+            <p class="menu-label">
+              Transactions
+            </p>
+            <ul class="menu-list">
+              <li><a>Payments</a></li>
+              <li><a>Transfers</a></li>
+              <li><a>Balance</a></li>
+            </ul>
+          </div>
+        </div>
+        <hr>
+        <div class="content has-text-centered">
+          <figure class="image is-32x32" style="display: inline-block;">
+            <img src="<%= static_path(@conn, "/images/logos/logo_acro.png") %>">
+          </figure>
+          <p>
+            Commercefacile.com
+          </p>
+        </div>
+      </div>
+    </footer>
+    <!--end footer-->
+
+    <script type="text/javascript">
+      var contains = function(el, className){
+          var c = false;
+          if (el.classList)
+              c = el.classList.contains(className);
+          else
+              c = new RegExp('(^| )' + className + '( |$)', 'gi').test(el.className);
+          
+          return c;
+      };
+      var addClassName = function(el, className){
+          if (el.classList)
+              el.classList.add(className);
+          else
+              el.className += ' ' + className;
+      };
+
+      var removeClassName = function(el, className){
+          if (el.classList)
+              el.classList.remove(className);
+          else
+              el.className = el.className.replace(new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
+      }
+
+      var menuToggle = document.querySelector('.nav-toggle'),
+              menu = document.querySelector('.nav-menu');
+
+          menuToggle.addEventListener('click', function(e){
+              if(contains(menu, "is-active")){
+                  removeClassName(menu, "is-active");
+                  removeClassName(menuToggle, "is-active");
+              }else{
+                  addClassName(menu, "is-active");
+                  addClassName(menuToggle, "is-active");
+              }
+          })
+    </script>
+
+ <%= render_existing @view_module, "scripts." <> @view_template, assigns %>
+
   </body>
 </html>

@@ -1,0 +1,53 @@
+<style>
+    .tabs ul, .tabs.is-boxed li.is-active a{
+        border-color: #33446d !important;
+    }
+    .tabs.is-boxed li.is-active a{
+        border-bottom-color: transparent !important;
+        color: #f79520;
+    }
+    .tabs.is-boxed a{transition: all .3s; color: #33446d;}
+    .tabs.is-boxed a:hover{
+        color: #f79520;
+        background-color: transparent;
+        border-bottom-color: transparent;
+    }
+
+    .content blockquote{
+        border-left: 4px solid #e8eaee !important;
+        color: #33446d;
+        padding: 3px;
+    }
+
+    .label{
+        color: #33446d;
+        font-weight: normal;
+    }
+
+    .input{
+        box-shadow: none;
+    }
+
+    .button.submit{
+        color: #33446d;
+        border-color: #33446d;
+        transition: all .3s;
+    }
+    .button.submit:hover{
+        color: whitesmoke;
+        background: #1d305d;
+        border-color: #1d305d;
+    }
+
+    .select, select, .input{
+        transition: all .3s;
+        border-color: #33446d !important;
+        color: #33446d !important;
+    }
+    .select::after, select:focus, select:active, .input:active, .input:focus{
+        border-color: #33446d !important;
+    }
+    .select:hover{
+        cursor: pointer;
+    }
+</style>

@@ -1,0 +1,109 @@
+<style>
+    .box.ad-container{
+        border-radius: 3px; 
+        padding: .25rem; 
+        box-shadow: none; 
+        border: 1px solid #e8eaee;
+        transition: all .3s;
+    }
+    .box.ad-container .content {
+        white-space: nowrap; 
+        overflow: hidden;
+        text-overflow: ellipsis; 
+        width: 55%;
+    }
+    .box.ad-container:hover, .box.ad-container:active, .box.ad-container:focus{
+        border-color: #f79f36;
+        box-shadow: none;
+        /*box-shadow: 0 2px 3px rgba(10, 10, 10, 0.1), 0 0 0 1px #f79f36;*/
+    }
+    .box.ad-container .time{
+        position: absolute; 
+        right: 0; 
+        bottom: 0;
+        color: #606e8d;
+    }
+
+    .ad-thumbnails-image-wrapper{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #ccc;
+        width: 96px;
+        height: 96px;
+    }
+    .ad-thumbnails-image-wrapper img {
+        max-width: 100% !important;
+        max-height: 100% !important;
+        display: block !important;
+        margin: 0 auto !important;
+    }
+
+    .ad-price, .ad-price strong{
+        color: #f79f36;
+    }
+
+    .ad-title{
+        color: #33446d;
+        font-size: 1.2em;
+    }
+
+    .ad-category, .pagination-previous, .pagination-next{
+        color: #606e8d;
+    }
+
+    .pagination-previous, .pagination-next{
+        transition: all .3s;
+    }
+    .pagination-previous:hover, .pagination-next:hover{
+        color: white;
+        background-color: #33446d;
+        border-color: #33446d;
+    }
+
+    .button.search{
+        color: white;
+        background: #33446d;
+        border-color: #33446d;
+        transition: all .3s;
+    }
+    .button.search:hover{
+        background: #1d305d;
+        border-color: #1d305d;
+    }
+
+    .input{
+        box-shadow: none;
+    }
+
+    /*.button.all{
+        color: #33446d;
+        border-color: #33446d;
+        transition: all .3s;
+    }
+    .button.all:hover{
+        color: whitesmoke;
+        background: #1d305d;
+        border-color: #1d305d;
+    }*/
+
+    .select, select, .input{
+        transition: all .3s;
+        border-color: #33446d !important;
+        color: #33446d !important;
+    }
+    .select::after, select:focus, select:active, .input:active, .input:focus{
+        border-color: #33446d !important;
+    }
+    .select:hover{
+        cursor: pointer;
+    }
+
+    .media-right i{
+        color: #606e8d;
+        transition: all .3s;
+    }
+    .media-right i:hover{
+        color: #f79f36;
+    }
+</style>

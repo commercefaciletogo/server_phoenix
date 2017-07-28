@@ -1,0 +1,18 @@
+<script src="<%= static_path @conn, "/js/vendors/masker.js" %>"></script>
+<script>
+    var telMask = new Masker(
+        [
+            '+___ ___ __ __'    // international
+        ],
+        /^[0-9]$/ // allowed chars
+    );
+
+    var telInput = document.querySelector("input[type='tel']");
+    console.log(telInput);
+
+    telMask.mask(telInput);
+    // // telMask.unmask(telInput);
+
+    // var val = telMask.unmaskVal(telInput.value);
+    // console.log(val);
+</script>

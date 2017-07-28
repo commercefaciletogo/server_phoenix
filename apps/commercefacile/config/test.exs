@@ -8,3 +8,11 @@ config :commercefacile, Commercefacile.Repo,
   database: "commercefacile_test",
   hostname: "localhost",
   pool: Ecto.Adapters.SQL.Sandbox
+
+
+config :commercefacile, Commercefacile.Services,
+  generator: Commercefacile.Services.Generator.Mock,
+  sms: [
+    engine: Commercefacile.Services.SMS.Mock,
+    originator: "C-Facile"
+  ]
