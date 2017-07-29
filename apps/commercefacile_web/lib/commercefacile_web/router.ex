@@ -48,7 +48,10 @@ defmodule Commercefacile.Web.Router do
     get "/annonces", AdController, :index
     get "/annonces/créer", AdController, :create
     post "/annonces", AdController, :save #not yet tested
+    post "/annonces/private", AdController, :private_save #not yet tested
     get "/annonces/:uuid", AdController, :show
+    delete "/annonces/:uuid", AdController, :delete
+    put "/annonces/:uuid", AdController, :update
     
 
     get "/help", InfoPageController, :help

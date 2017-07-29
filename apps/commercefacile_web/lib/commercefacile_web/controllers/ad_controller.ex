@@ -1,6 +1,9 @@
 defmodule Commercefacile.Web.AdController do
     use Commercefacile.Web, :controller
 
+    plug Guardian.Plug.EnsureAuthenticated, [handler: Commercefacile.Web.ErrorController]
+    when action in [:private_save, :edit, :update, :delete]
+
     @ad_conditions [[key: "New", value: "New"], [key: "Used", value: "Used"]]
     @ad_images_session_key :ad_images
 
@@ -31,52 +34,62 @@ defmodule Commercefacile.Web.AdController do
         # make sure of no invalid data
         images = get_session(conn, @ad_images_session_key) || []
         ad = Map.merge(ad, %{"images" => images})
-        changeset = Commercefacile.Ads.Ad.changeset(ad, :new_for_guest)
+        changeset = Commercefacile.Ads.Ad.changeset(ad, :guest)
         if changeset.valid? do
             conn = put_session(conn, :guest, Commercefacile.Accounts.new_guest(ad))
             # check phone is taken
-            if Commercefacile.Accounts.user_phone_taken?(phone) do
-                # if true then redirect to login page
-                redirect(conn, to: auth_path(conn, :get_login))
-            else
-                # if false redirect to code page
-                {:ok, user, %{reference:  reference}} = Commercefacile.Accounts.new_user(ad)
-                conn = put_session(conn, :user_in_register_mode, user)
-                conn = put_session(conn, :code_reference, reference)
-                redirect(conn, to: auth_path(conn, :get_code))
+            case Commercefacile.Accounts.phone_taken?(phone) do
+                false -> 
+                    {:ok, user, %{reference:  reference}} = Commercefacile.Accounts.new_user(ad)
+                    put_session(conn, :user_in_register_mode, user)
+                    |> put_session(:code_reference, reference)
+                    |> redirect(to: auth_path(conn, :get_code))
+                {true, :unverified_user} -> 
+                    put_flash(conn, :info, "Verify your phone to countinue")
+                    |> redirect(to: auth_path(conn, :get_verify))
+                {true, :inactive_user} -> 
+                    put_status(conn, 400)
+                    |> put_flash(:info, "Phone belongs to inactive account, contact adminst.. or new account")
+                    |> assign(:changeset, changeset)
+                    |> render("create.html")
+                {true, :active_user} -> 
+                    redirect(conn, to: auth_path(conn, :get_login))
             end
         else
-            categories = Commercefacile.Ads.get_categories(:main_with_children)
-                |> Commercefacile.Web.Serializers.AdController.Create.Categories.to_list(:select)
-                # get locations
-            locations = Commercefacile.Locations.get_regions(:togo, :with_cities)
-                |> Commercefacile.Web.Serializers.AdController.Create.Locations.to_list(:select)
-            conn
-            |> get_ad_images
-            |> assign(:changeset, %{changeset | action: :validate})
-            |> render("create.html", categories: categories, locations: locations, conditions: @ad_conditions)
+            put_status(conn, 400)
+            |> assign(:changeset, changeset)
+            |> add_fixtures(:select)
+            |> render("create.html")
         end
     end
-    def save(conn, %{"ad" => ad} = params) do
-        IO.inspect params
+
+    def private_save(conn, %{"ad" => ad} = params) do
+        user = Guardian.Plug.current_resource(conn)
+        # IO.inspect params
         images = get_session(conn, @ad_images_session_key) || []
         ad = Map.merge(ad, %{"images" => images})
-        IO.inspect ad
-        changeset = Commercefacile.Ads.Ad.changeset(ad, :new_for_user)
-        if changeset.valid? do
-            conn = delete_session(conn, @ad_images_session_key)
-            conn = put_flash(conn, :success, "Ad Created Successfully")
-            redirect(conn, to: user_path(conn, :dashboard, "9110735"))
-        else
-            categories = Commercefacile.Ads.get_categories(:main_with_children)
-                |> Commercefacile.Web.Serializers.AdController.Create.Categories.to_list(:select)
-                # get locations
-            locations = Commercefacile.Locations.get_regions(:togo, :with_cities)
-                |> Commercefacile.Web.Serializers.AdController.Create.Locations.to_list(:select)
-            conn
-            |> get_ad_images
-            |> assign(:changeset, %{changeset | action: :validate})
-            |> render("create.html", categories: categories, locations: locations, conditions: @ad_conditions)
+        # IO.inspect ad
+        case Commercefacile.Ads.new_ad(ad, user) do
+            {:ok, _} -> 
+                conn
+                |> redirect(to: user_path(conn, :dashboard, user.phone))
+            {:error, :invalid_date, changeset} ->
+                conn
+                |> put_status(400)
+                |> assign(:changeset, %{changeset | action: :validate})
+                |> add_fixtures(:select)
+                |> render("create.html")
+            {:error, :internal_error} ->
+                conn
+                |> put_status(500)
+                |> put_view(Commercefacile.Web.ErrorView)
+                |> render("500.html")
+            {:error, changeset} ->
+                conn
+                |> put_status(400)
+                |> assign(:changeset, changeset)
+                |> add_fixtures(:select)
+                |> render("create.html")
         end
     end
 
@@ -97,13 +110,49 @@ defmodule Commercefacile.Web.AdController do
         render conn, "show.html"
     end
 
-    # def edit(conn, _params) do
-    #     # ad = get_ad
-    #     render conn, "show.html"
-    # end
+    def edit(conn, %{uuid: uuid}) do
+        case Commercefacile.Ads.get_ad(uuid: uuid) do
+            {:error, :not_found} -> 
+                redirect(conn, to: "/")
+            {:ok, ad} -> 
+                assign(conn, :changeset, ad)
+                |> add_fixtures(:select)
+                |> render("edit.html")
+        end
+    end
 
-    # def delete(conn, _params) do
-    #     # ad = get_ad
-    #     render conn, "show.html"
-    # end
+    def update(conn, %{uuid: uuid, ad: ad}) do
+        user = Guardian.Plug.current_resource(conn)
+        case Commercefacile.Ads.update_ad(uuid: uuid, ad: ad) do
+            {:error, changeset} -> 
+                assign(conn, :changeset, changeset)
+                |> put_status(400)
+                |> add_fixtures(:select)
+                |> render("edit.html")
+            {:ok, _} -> 
+                redirect(conn, to: user_path(conn, :dashboard, user.phone))
+        end
+    end
+
+    def delete(conn, %{uuid: uuid}) do
+        user = Guardian.Plug.current_resource(conn)
+        case Commercefacile.Ads.delete_ad(uuid: uuid) do
+            {:error, :not_found} -> 
+                redirect(conn, to: "/")
+            {:ok, _} -> 
+                redirect(conn, to: user_path(conn, :dashboard, user.phone))
+        end
+    end
+
+    defp add_fixtures(conn, :select) do
+        categories = Commercefacile.Ads.get_categories(:main_with_children)
+            |> Commercefacile.Web.Serializers.AdController.Create.Categories.to_list(:select)
+            # get locations
+        locations = Commercefacile.Locations.get_regions(:togo, :with_cities)
+            |> Commercefacile.Web.Serializers.AdController.Create.Locations.to_list(:select)
+
+        assign(conn, :locations, locations)
+        |> assign(:categories, categories)
+        |> assign(:conditions, @ad_conditions)
+    end
 end

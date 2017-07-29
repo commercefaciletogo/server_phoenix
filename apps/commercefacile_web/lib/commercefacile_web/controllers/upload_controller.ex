@@ -59,4 +59,12 @@ defmodule Commercefacile.Web.UploadController do
                 conn
         end
     end
+
+    defp image_position(conn) do
+        case get_session(conn, :ad_images) do
+            nil -> 1
+            [] -> 1
+            images -> length(images) + 1 
+        end
+    end
 end

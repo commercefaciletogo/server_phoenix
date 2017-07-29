@@ -38,6 +38,7 @@ defmodule Commercefacile.Mixfile do
     {:openstex, "~> 0.3.6"},
     {:comeonin, "~> 3.2"},
     {:monetized, "~> 0.5.0"},
+    {:hashids, "~> 2.0"},
     {:mapail, "~> 1.0"},
     {:openstex_adapters_rackspace, "~> 0.3.0"},
     {:junit_formatter, ">= 0.0.0", only: :test},
