@@ -2,6 +2,8 @@ defmodule Commercefacile.Ads.Ad do
     use Ecto.Schema
     import Ecto.Changeset
 
+    # use Rummage.Ecto
+
     @default_duration [months: 1]
 
     @private %{

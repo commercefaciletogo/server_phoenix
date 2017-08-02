@@ -45,7 +45,7 @@ defmodule Commercefacile.Accounts.User do
     def hash_password(changeset) do
         if changeset.valid? do
             password = get_change(changeset, :password)
-            hash = Comeonin.Bcrypt.hashpwsalt(password)
+            hash = PyCryptX.hash_pass(password)
             put_change(changeset, :password, hash)
         else
             changeset
@@ -53,6 +53,6 @@ defmodule Commercefacile.Accounts.User do
     end
 
     def confirms_password?(%Commercefacile.Accounts.User{password: hashed_password}, password) do
-        Comeonin.Bcrypt.checkpw(password, hashed_password)
+        PyCryptX.check_pass(password, hashed_password)
     end
 end
