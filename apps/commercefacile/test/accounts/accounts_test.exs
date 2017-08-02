@@ -14,7 +14,8 @@ defmodule Commercefacile.AccountsTest do
         test "{true, :unverified_user}" do
             payload = %{name: "pinana Pijo", phone: "+2289110735", password: "secretpass", password_confirmation: "secretpass", terms: true}
             assert {:ok, _, _} = Commercefacile.Accounts.new_user(payload)
-            assert {true, :unverified_user} = Commercefacile.Accounts.phone_taken?("+2289110735")
+            phone = "+2289110735"
+            assert {true, :unverified_user, ^phone} = Commercefacile.Accounts.phone_taken?(phone)
         end
     end
 

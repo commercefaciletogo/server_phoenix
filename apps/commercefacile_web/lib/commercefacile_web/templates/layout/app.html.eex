@@ -7,6 +7,11 @@
     <meta name="description" content="Vendez, achetez, louez et proposez vos services sur le plus grand site de petites annonces gratuites au Togo : immobilier, voiture, moto, etc.">
     <meta name="author" content="@thomasdolar">
 
+    <meta name="theme-color" content="#1d305d" />
+    <meta name="msapplication-navbutton-color" content="#1d305d" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />  
+    <meta name="apple-mobile-web-app-status-bar-style" content="#1d305d" />
+
     <meta property="fb:app_id" content="173791383126653"/>
     <meta name="twitter:site" content="@commercefacile">
 
@@ -118,13 +123,27 @@
           <a href="<%= ad_path(@conn, :index) %>" 
             class="nav-item is-tab is-hidden-tablet <%= active_if_current(@conn, to: ad_path(@conn, :index), controller: Commercefacile.Web.AdController, action: [:index, :show]) %>">
             Annonces</a>
-          <a href="<%= auth_path @conn, :get_login %>" class="nav-item is-tab">
-            <figure class="image is-16x16" style="margin-right: 8px;">
-              <img src="<%= static_path(@conn, "/images/icons/user.png") %>">
-            </figure>
-            Se connecter
-          </a>
-          <!--<a class="nav-item is-tab">Log out</a>-->
+          <% user = Guardian.Plug.current_resource(@conn) %>
+          <%= unless user do %>
+            <a href="<%= auth_path @conn, :get_login %>" class="nav-item is-tab">
+              <figure class="image is-16x16" style="margin-right: 8px;">
+                <img src="<%= static_path(@conn, "/images/icons/user.png") %>">
+              </figure>
+              Se connecter
+            </a>            
+          <% else %>
+            <a href="<%= user_path(@conn, :dashboard, user.phone) %>" class="nav-item is-tab">
+              <figure class="image is-16x16" style="margin-right: 8px;">
+                <img src="<%= static_path(@conn, "/images/icons/user.png") %>">
+              </figure>
+              Mon Compte
+            </a>
+            <a href="" class="nav-item is-tab">
+              <form action="<% auth_path(@conn, :logout) %>" method="post">
+                <button type="submit" class="button is-link">Log out</button>
+              </form>
+            </a>
+          <% end %>
         </div>
       </div>
     </nav>

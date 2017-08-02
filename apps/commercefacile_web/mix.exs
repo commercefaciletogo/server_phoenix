@@ -45,6 +45,7 @@ defmodule Commercefacile.Web.Mixfile do
      {:navigation_history, "~> 0.2.2"},
      {:phoenix_active_link, "~> 0.0.1"},
      {:phoenix_html_simplified_helpers, "~> 1.2"},
+     {:font_awesome_phoenix, "~> 1.0"},
      {:commercefacile, in_umbrella: true},
      {:commercefacile_admin, in_umbrella: true}, 
      {:junit_formatter, ">= 0.0.0", only: :test},

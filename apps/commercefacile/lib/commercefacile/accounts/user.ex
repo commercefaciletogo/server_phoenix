@@ -12,6 +12,9 @@ defmodule Commercefacile.Accounts.User do
         field :verified, :boolean
 
         belongs_to :location, Commercefacile.Locations.Location
+        has_many :ads, Commercefacile.Ads.Ad, on_delete: :delete_all
+        many_to_many :favorited_ads, Commercefacile.Ads.Ad, join_through: "favorited_ads", on_delete: :delete_all
+        many_to_many :reported_ads, Commercefacile.Ads.Ad, join_through: "reported_ads", on_delete: :delete_all
 
         timestamps()
     end

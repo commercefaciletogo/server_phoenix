@@ -9,4 +9,10 @@ defmodule Commercefacile.Ads.Rejected do
 
         timestamps()
     end
+
+    def changeset(struct, params \\ %{}) do
+        struct
+        |> cast(params, [:fields, :ad_id])
+        |> validate_required([:fields, :ad_id])
+    end
 end

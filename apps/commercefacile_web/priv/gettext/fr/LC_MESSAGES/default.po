@@ -13,3 +13,9 @@ msgstr ""
 #: lib/commercefacile_web/templates/page/index.html.eex:1
 msgid "Welcome to %{name}"
 msgstr "Bienvenu sur %{name}"
+
+msgid "new"
+msgstr "nouveau"
+
+msgid "used"
+msgstr "utilisé"

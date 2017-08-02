@@ -37,12 +37,14 @@ defmodule Commercefacile.Mixfile do
     {:timex, "~> 3.1"},
     {:openstex, "~> 0.3.6"},
     {:comeonin, "~> 3.2"},
+    {:ex_bcrypt, "~> 0.0.1", override: true},
     {:monetized, "~> 0.5.0"},
     {:hashids, "~> 2.0"},
     {:mapail, "~> 1.0"},
     {:openstex_adapters_rackspace, "~> 0.3.0"},
     {:junit_formatter, ">= 0.0.0", only: :test},
     {:mix_test_watch, "~> 0.3", only: :dev, runtime: false, override: true},
+    {:doc_first_formatter, "~> 0.0.1", only: :test},
      {:ex_unit_notifier, "~> 0.1", only: :test},
      {:ecto, "~> 2.1"}]
   end
@@ -54,7 +56,7 @@ defmodule Commercefacile.Mixfile do
   #
   # See the documentation for `Mix` for more info on aliases.
   defp aliases do
-    ["ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
+    ["ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds/seeds.exs"],
      "ecto.reset": ["ecto.drop", "ecto.setup"],
      "test": ["ecto.create --quiet", "ecto.migrate", "test"]]
   end

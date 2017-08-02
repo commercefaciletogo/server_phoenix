@@ -16,7 +16,7 @@ defmodule Commercefacile.Repo.Migrations.AddAdsTable do
       add :start_date, :utc_datetime, null: true
       add :end_date, :utc_datetime, null: true
 
-      add :user_id, references(:users)
+      add :user_id, references(:users), on_delete: :delete_all, on_update: :update_all
       add :category_id, references(:categories)
 
       timestamps()

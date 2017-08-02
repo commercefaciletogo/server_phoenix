@@ -8,4 +8,10 @@ defmodule Commercefacile.Ads.Favorited do
 
         timestamps()
     end
+
+    def changeset(struct, params \\ %{}) do
+        struct
+        |> cast(params, [:user_id, :ad_id])
+        |> validate_required([:user_id, :ad_id])
+    end
 end

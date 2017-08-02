@@ -7,7 +7,7 @@ defmodule Commercefacile.Repo.Migrations.AddAdImagesTable do
       add :name, :string
       add :main, :boolean
       add :size, :string
-      add :ad_id, references(:ads)
+      add :ad_id, references(:ads), on_delete: :delete_all, on_update: :update_all
 
       timestamps()
     end

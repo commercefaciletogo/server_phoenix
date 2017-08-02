@@ -107,8 +107,11 @@ Vue.component('i-u-p', {
             this.inProgress = true;
             this.failed = false;
             this.success = false;
+
             let fd = new FormData
             fd.append("url", this.uploadedInfo.url);
+            fd.append("edit_mode", window.editMode);
+
             let request = new XMLHttpRequest();
             request.open('DELETE', `${window.uploadUrl}/${this.uploadedInfo.reference}`);
             request.setRequestHeader("x-csrf-token", window.csrfToken);
@@ -169,8 +172,11 @@ Vue.component("s-i", {
         remove() {
             this.$set(this, "busy", true);
             this.$emit("busy", true);
+
             let fd = new FormData
             fd.append("url", this.url);
+            fd.append("edit_mode", window.editMode);
+
             let request = new XMLHttpRequest();
             request.open('DELETE', `${window.uploadUrl}/${this.path}`);
             request.setRequestHeader("x-csrf-token", window.csrfToken);

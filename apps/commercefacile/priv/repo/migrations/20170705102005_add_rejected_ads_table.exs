@@ -4,7 +4,7 @@ defmodule Commercefacile.Repo.Migrations.AddRejectedAdsTable do
   def change do
     create table(:rejected_ads) do
       add :fields, :string
-      add :ad_id, references(:ads)
+      add :ad_id, references(:ads), on_delete: :delete_all, on_update: :update_all
 
       timestamps()
     end

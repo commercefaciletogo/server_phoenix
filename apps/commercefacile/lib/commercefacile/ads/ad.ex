@@ -37,24 +37,25 @@ defmodule Commercefacile.Ads.Ad do
 
         belongs_to :user, Commercefacile.Accounts.User
         belongs_to :category, Commercefacile.Ads.Category
-        has_many :images, Commercefacile.Ads.Images
+        has_many :images, Commercefacile.Ads.Images, on_delete: :delete_all
+        has_one :rejected, Commercefacile.Ads.Rejected, on_delete: :delete_all
+        many_to_many :reporters, Commercefacile.Accounts.User, join_through: "reported_ads", on_delete: :delete_all
+        many_to_many :favoriters, Commercefacile.Accounts.User, join_through: "favorited_ads", on_delete: :delete_all
 
         timestamps()
     end
 
     def changeset(struct, %{} = params \\ %{}) do
         struct
-        |> cast(params, [:title, :condition, :description, :price, :negotiable, :user_id, :category_id])
+        |> cast(params, [:start_date, :end_date, :code, :status, :title, :condition, :description, :price, :negotiable, :user_id, :category_id])
         |> validate_required([:title, :condition, :description, :price, :negotiable, :user_id, :category_id])
-        |> add_status
-        |> add_uuid
     end
 
-    defp add_status(changeset) do
+    def add_pending_status(changeset) do
         put_change(changeset, :status, "pending")
     end
 
-    defp add_uuid(changeset) do
+    def add_uuid(changeset) do
         put_change(changeset, :uuid, Ksuid.generate())
     end
 
@@ -79,7 +80,11 @@ defmodule Commercefacile.Ads.Ad do
         |> validate_length(:description, min: 10)
         |> validate_length(:images, min: 1)
     end
-    def form_changeset(params, :public) do
+    def form_changeset(params, :private_with_location) do
+        form_changeset(params, :private)
+        |> validate_required([:location])
+    end
+    def form_changeset(params, :guest) do
         data = %{}
         type = Map.merge(@private, @guest)
 

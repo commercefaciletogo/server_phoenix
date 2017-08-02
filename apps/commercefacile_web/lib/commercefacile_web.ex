@@ -35,6 +35,7 @@ defmodule Commercefacile.Web do
 
       # Use all HTML functionality (forms, tags, etc)
       use Phoenix.HTML
+      use Phoenix.HTML.SimplifiedHelpers
 
       import Commercefacile.Web.Router.Helpers
       import Commercefacile.Web.ErrorHelpers

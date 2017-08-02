@@ -32,7 +32,7 @@
 
                 <hr>
                 <div class="has-text-centered">
-                    <a href="<%= auth_path @conn, :get_verify %>">Mot de passe oublie</a>
+                    <a href="<%= auth_path @conn, :get_reset_verify %>">Mot de passe oublie</a>
                 </div>
                 
 

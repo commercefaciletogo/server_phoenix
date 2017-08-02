@@ -40,4 +40,16 @@ defmodule Commercefacile.Web.AdView do
         <meta name="twitter:image"          content="<%= first %>">
         """
     end
+
+    def rejected?(%{assigns: assigns}, field) do
+        unless assigns["edit_mode"] do
+            ""
+        else
+            if field in assigns["rejected_fields"] do
+                " rejected "
+            else
+                ""
+            end
+        end
+    end
 end

@@ -10,6 +10,10 @@ config :commercefacile, Commercefacile.Repo,
   pool_size: 10
 
 
+config :commercefacile, Commercefacile.Image,
+    transformer: Commercefacile.Image.Transformer.ImageMagick,
+    cloud_store: Commercefacile.Image.Storage.Opentex
+
 config :commercefacile, Commercefacile.Services,
   generator: Commercefacile.Services.Generator,
   sms: [

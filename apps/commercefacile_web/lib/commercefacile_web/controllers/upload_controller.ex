@@ -33,7 +33,12 @@ defmodule Commercefacile.Web.UploadController do
         end
     end
 
-    def delete(conn, %{"reference" => filename, "url" => url}) do
+    def delete(conn, %{"reference" => _filename, "url" => url, "edit_mode" => true}) do
+        conn
+        |> delete_ad_image(url)
+        |> render("delete.json")
+    end
+    def delete(conn, %{"reference" => filename, "url" => url, "edit_mode" => false}) do
         case Image.delete(:cloud, filename) do
             :ok -> 
                 conn

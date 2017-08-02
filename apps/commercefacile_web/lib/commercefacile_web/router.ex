@@ -42,7 +42,7 @@ defmodule Commercefacile.Web.Router do
       post "/réinitialiser", AuthController, :post_reset
       get "/mot-de-passe", AuthController, :get_reset_verify
       get "/nouveau-numero", AuthController, :get_new_verify
-      delete "/se-deconnecter", AuthController, :logout
+      post "/se-deconnecter", AuthController, :logout
     end
 
     get "/annonces", AdController, :index
@@ -50,6 +50,7 @@ defmodule Commercefacile.Web.Router do
     post "/annonces", AdController, :save #not yet tested
     post "/annonces/private", AdController, :private_save #not yet tested
     get "/annonces/:uuid", AdController, :show
+    get "/annonces/:uuid/modifier", AdController, :edit
     delete "/annonces/:uuid", AdController, :delete
     put "/annonces/:uuid", AdController, :update
     

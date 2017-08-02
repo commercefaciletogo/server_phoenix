@@ -9,6 +9,10 @@ config :commercefacile, Commercefacile.Repo,
   hostname: "localhost",
   pool: Ecto.Adapters.SQL.Sandbox
 
+config :commercefacile, Commercefacile.Image,
+    transformer: Commercefacile.Image.Transformer.Mock,
+    store: Commercefacile.Image.Storage.Mock
+
 
 config :commercefacile, Commercefacile.Services,
   generator: Commercefacile.Services.Generator.Mock,

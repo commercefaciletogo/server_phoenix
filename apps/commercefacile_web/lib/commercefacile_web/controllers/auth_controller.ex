@@ -16,7 +16,7 @@ defmodule Commercefacile.Web.AuthController do
         case Commercefacile.Accounts.new_user(register) do
             {:ok, user, code} ->
                 conn = put_session(conn, :code_reference, code.reference)
-                conn = put_session(conn, :user_in_register_mode, user)
+                conn = put_session(conn, :user_in_register_mode, user.uuid)
                 redirect(conn, to: auth_path(conn, :get_code))
             {:error, :invalid_data, changeset} -> 
                 conn
@@ -67,8 +67,8 @@ defmodule Commercefacile.Web.AuthController do
         case Commercefacile.Accounts.verify_phone(verify) do
             {:ok, user, code} -> 
                 conn = put_session(conn, :code_reference, code.reference)
-                conn = if get_session(conn, :reset_mode), do: put_session(conn, :user_in_reset_mode, user), else: conn
-                conn = if get_session(conn, :new_phone), do: put_session(conn, :user_in_new_phone_mode, user), else: conn
+                conn = if get_session(conn, :reset_mode), do: put_session(conn, :user_in_reset_mode, user.uuid), else: conn
+                conn = if get_session(conn, :new_phone), do: put_session(conn, :user_in_new_phone_mode, user.uuid), else: conn
                 redirect(conn, to: auth_path(conn, :get_code))
             {:error, :invalid_data, changeset} ->
                 conn
@@ -92,9 +92,9 @@ defmodule Commercefacile.Web.AuthController do
 
     # ✓
     def get_code(conn, _params) do
-        user = get_session(conn, :user_in_reset_mode) || get_session(conn, :user_in_register_mode) || get_session(conn, :user_in_new_phone_mode)
+        user_uuid = get_session(conn, :user_in_reset_mode) || get_session(conn, :user_in_register_mode) || get_session(conn, :user_in_new_phone_mode)
         refercence = get_session(conn, :code_reference)
-        if user && refercence do
+        if user_uuid && refercence do
             conn
             |> assign(:changeset, Commercefacile.Accounts.Embededs.changeset(:code))
             |> render("code.html")
@@ -113,9 +113,9 @@ defmodule Commercefacile.Web.AuthController do
                     conn = delete_session(conn, :code_reference)
                     case get_session(conn, :guest) do
                         %Commercefacile.Accounts.Guest{ad: %Commercefacile.Accounts.Guest.Ad{images: [_|_]} = ad} ->
-                            {:ok, _ad} = Commercefacile.Ads.new(ad)
-                            conn = delete_session(conn, :guest)
-                            redirect(conn, to: user_path(conn, :dashboard, user.phone))
+                            {:ok, _ad} = Commercefacile.Ads.new_ad(ad, user)
+                            delete_session(conn, :guest)
+                            |> redirect(to: user_path(conn, :dashboard, user.phone))
                         nil ->
                             if get_session(conn, :reset_mode) do
                                 conn
@@ -158,8 +158,15 @@ defmodule Commercefacile.Web.AuthController do
                 conn = Guardian.Plug.sign_in(conn, user)
                 case get_session(conn, :guest) do
                     %Commercefacile.Accounts.Guest{ad: %Commercefacile.Accounts.Guest.Ad{images: [_|_]} = ad} ->
-                        {:ok, _ad} = Commercefacile.Ads.new(ad)
-                        redirect(conn, to: user_path(conn, :dashboard, phone))
+                        case Commercefacile.Ads.new_ad(ad, user) do
+                            {:ok, _ad} -> 
+                                delete_session(conn, :guest)
+                                |> redirect(to: user_path(conn, :dashboard, phone))
+                            {:error, :internal_error} ->
+                                put_status(conn, 500)
+                                |> put_view(Commercefacile.Web.ErrorView)
+                                |> render("500.html")
+                        end
                     nil -> redirect(conn, to: logged_in_path(conn, phone))
                 end
             {:error, :invalid_data, changeset} ->
@@ -197,8 +204,8 @@ defmodule Commercefacile.Web.AuthController do
     # ✓
     def get_reset(conn, _params) do
         in_mode? = get_session(conn, :reset_mode)
-        user = get_session(conn, :user_in_reset_mode)
-        if in_mode? && user do
+        user_uuid = get_session(conn, :user_in_reset_mode)
+        if in_mode? && user_uuid do
             conn
             |> assign(:changeset, Commercefacile.Accounts.Embededs.changeset(:reset))
             |> render("reset.html")
@@ -211,8 +218,8 @@ defmodule Commercefacile.Web.AuthController do
         
     end
     def post_reset(conn, %{"reset" => reset}) do
-        if user = get_session(conn, :user_in_reset_mode) do
-            case Commercefacile.Accounts.reset_user_password(%{reset: reset, user: user}) do
+        if user_uuid = get_session(conn, :user_in_reset_mode) do
+            case Commercefacile.Accounts.reset_user_password(reset, user_uuid) do
                 {:ok, user} ->
                     Guardian.Plug.sign_in(conn, user)
                     |> redirect(to: logged_in_path(conn, user.phone))
@@ -235,14 +242,12 @@ defmodule Commercefacile.Web.AuthController do
     end
 
     defp guest?(conn, :login) do
-        with %Commercefacile.Accounts.Guest{info: %Commercefacile.Accounts.Guest.Information{phone: phone}} 
-        when not is_nil(phone) <- get_session(conn, :guest) 
-        do
-            changeset = conn.assigns["changeset"]
-            changeset = Ecto.Changeset.put_change(changeset, :phone, phone)
-            assign(conn, :changeset, changeset)
-        else
-            _ -> conn
+        case get_session(conn, :login_phone) do
+            nil -> conn
+            phone -> 
+                changeset = conn.assigns["changeset"]
+                changeset = Ecto.Changeset.put_change(changeset, :phone, phone)
+                assign(conn, :changeset, changeset)
         end
     end
 

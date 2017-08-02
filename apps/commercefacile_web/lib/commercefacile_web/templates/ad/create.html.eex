@@ -7,12 +7,14 @@
             
         </div>
         <div class="column is-half-desktop is-two-thirds-tablet">
-            <%= form_for @changeset, ad_path(@conn, :save), [as: :ad], fn f -> %>
+
+            <%= form_for @changeset, @post_action, [as: :ad, method: @post_method], fn f -> %>
+            
                 <div data-intro="Informations De L'annonce" data-step="1" class="content" style="margin-bottom: 10px;">
                     <blockquote>Informations De L'annonce</blockquote>
                 </div>
 
-                <div id="adImages" class="field">
+                <div id="adImages" class="field <%= rejected?(@conn, :images) %>">
                     <div v-if="moreImages" class="field is-horizontal" data-intro="Ajouter une image" data-step="2">
                         <div class="field-label is-normal">
                             <label class="label">Image(s)</label>
@@ -35,7 +37,7 @@
                     <i-u-p v-for="image in images" :key="image.name" :image="image" @busy="updateSubmissionStatus" @remove="removeImage"></i-u-p>
                 </div>
 
-                <div class="field is-horizontal">
+                <div class="field is-horizontal <%= rejected?(@conn, :title) %>">
                     <div class="field-label is-normal">
                         <label class="label">Titre</label>
                     </div>
@@ -49,7 +51,7 @@
                     </div>
                 </div>
 
-                <div class="field is-horizontal">
+                <div class="field is-horizontal <%= rejected?(@conn, :category) %>">
                     <div class="field-label is-normal">
                         <label class="label">Categorie</label>
                     </div>
@@ -65,7 +67,7 @@
                     </div>
                 </div>
 
-                <div class="field is-horizontal">
+                <div class="field is-horizontal <%= rejected?(@conn, :condition) %>">
                     <div class="field-label is-normal">
                         <label class="label">Condition</label>
                     </div>
@@ -81,7 +83,7 @@
                     </div>
                 </div>
 
-                <div class="field is-horizontal">
+                <div class="field is-horizontal <%= rejected?(@conn, :description) %>">
                     <div class="field-label is-normal">
                         <label class="label">Description</label>
                     </div>
@@ -95,7 +97,7 @@
                     </div>
                 </div>
 
-                <div class="field is-horizontal">
+                <div class="field is-horizontal <%= rejected?(@conn, :price) %>">
                     <div class="field-label is-normal">
                         <label class="label">Prix</label>
                     </div>
@@ -114,7 +116,7 @@
                     </div>
                 </div>
 
-                <div class="field is-horizontal">
+                <div class="field is-horizontal <%= rejected?(@conn, :negotiable) %>">
                     <div class="field-label">
                         <label class="label">Negotiable?</label>
                     </div>
@@ -135,95 +137,110 @@
                     </div>
                 </div>
 
-                <div class="content" style="margin-top: 50px; margin-bottom: 10px;">
-                    <blockquote>Vos Informations</blockquote>
-                </div>
+                <% user = Guardian.Plug.current_resource(@conn) %>
 
-                <div class="field is-horizontal">
-                    <div class="field-label is-normal">
-                        <label class="label">Nom</label>
+                <%= unless user do %>
+
+                    <div class="content" style="margin-top: 50px; margin-bottom: 10px;">
+                        <blockquote>Vos Informations</blockquote>
                     </div>
-                    <div class="field-body">
-                        <div class="field">
-                            <p class="control is-expanded has-icons-right">
-                                <input class="input" type="text">
-                                <span class="icon is-small is-right">
-                                    <i class="fa fa-check"></i>
-                                </span>
-                            </p>
-                            <!--<p class="help is-success">This email is correct</p>-->
+
+                    <div class="field is-horizontal">
+                        <div class="field-label is-normal">
+                            <label class="label">Nom</label>
+                        </div>
+                        <div class="field-body">
+                            <div class="field">
+                                <p class="control is-expanded">
+                                    <%= input f, :name, class: "input", required: true %>
+                                </p>
+                                <%= make_help f, :name %>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="field is-horizontal">
-                    <div class="field-label is-normal">
-                        <label class="label">Numero de telephone</label>
-                    </div>
-                    <div class="field-body">
-                        <div class="field">
-                            <p class="control is-expanded has-icons-right">
-                                <input class="input" type="text">
-                                <span class="icon is-small is-right">
-                                    <i class="fa fa-check"></i>
-                                </span>
-                            </p>
-                            <!--<p class="help is-success">This email is correct</p>-->
+                    <div class="field is-horizontal">
+                        <div class="field-label is-normal">
+                            <label class="label">Numero de telephone</label>
+                        </div>
+                        <div class="field-body">
+                            <div class="field">
+                                <p class="control is-expanded">
+                                    <%= input f, :phone, class: "input", required: true, using: :telephone_input %>
+                                </p>
+                                <%= make_help f, :phone %>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="field is-horizontal">
-                    <div class="field-label is-normal">
-                        <label class="label">Mot de passe</label>
-                    </div>
-                    <div class="field-body">
-                        <div class="field">
-                            <p class="control is-expanded has-icons-right">
-                                <input class="input" type="password">
-                                <span class="icon is-small is-right">
-                                    <i class="fa fa-check"></i>
-                                </span>
-                            </p>
-                            <!--<p class="help is-success">This email is correct</p>-->
+                    <div class="field is-horizontal">
+                        <div class="field-label is-normal">
+                            <label class="label">Mot de passe</label>
+                        </div>
+                        <div class="field-body">
+                            <div class="field">
+                                <p class="control is-expanded">
+                                    <%= input f, :password, class: "input", required: true, using: :password_input %>
+                                </p>
+                                <%= make_help f, :password %>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="field is-horizontal">
-                    <div class="field-label is-normal">
-                        <label class="label">Confirmer le mot de passe</label>
-                    </div>
-                    <div class="field-body">
-                        <div class="field">
-                            <p class="control is-expanded has-icons-right">
-                                <input class="input" type="password">
-                                <span class="icon is-small is-right">
-                                    <i class="fa fa-check"></i>
-                                </span>
-                            </p>
-                            <!--<p class="help is-success">This email is correct</p>-->
+                    <div class="field is-horizontal">
+                        <div class="field-label is-normal">
+                            <label class="label">Confirmer le mot de passe</label>
+                        </div>
+                        <div class="field-body">
+                            <div class="field">
+                                <p class="control is-expanded">
+                                    <%= input f, :password_confirmation, class: "input", required: true, using: :password_input %>
+                                </p>
+                                <%= make_help f, :password_confirmation %>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="field is-horizontal">
-                    <div class="field-label is-normal">
-                        <label class="label">Lieu</label>
+                    <div class="field is-horizontal">
+                        <div class="field-label is-normal">
+                            <label class="label">Lieu</label>
+                        </div>
+                        <div class="field-body">
+                            <div class="field">
+                                <div class="control is-expanded">
+                                    <div class="select is-fullwidth">
+                                        <%= select f, :location, @locations, prompt: "Choisir votre lieu" %>
+                                    </div>
+                                </div>
+                                <%= make_help f, :location %>
+                            </div>
+                        </div>
                     </div>
-                    <div class="field-body">
-                        <div class="field">
-                            <div class="control is-expanded">
-                                <div class="select is-fullwidth">
-                                    <%= select f, :location, @locations, prompt: "Choisir votre lieu" %>
+
+                <% else %>
+
+                     <%= unless Commercefacile.Accounts.user_location_set?(user) do %>
+
+                        <div class="field is-horizontal">
+                            <div class="field-label is-normal">
+                                <label class="label">Lieu</label>
+                            </div>
+                            <div class="field-body">
+                                <div class="field">
+                                    <div class="control is-expanded">
+                                        <div class="select is-fullwidth">
+                                            <%= select f, :location, @locations, prompt: "Choisir votre lieu" %>
+                                        </div>
+                                    </div>
+                                    <%= make_help f, :location %>
                                 </div>
                             </div>
-                            <!--<p class="help is-success">This email is correct</p>-->
                         </div>
-                    </div>
-                </div>
 
-                
+                    <% end %>
+
+                <% end %>
+
                 <div class="field is-horizontal">
                     <div class="field-label">
                         <!-- Left empty for spacing -->

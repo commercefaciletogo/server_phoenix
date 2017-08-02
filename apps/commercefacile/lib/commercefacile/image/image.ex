@@ -1,8 +1,8 @@
 defmodule Commercefacile.Image do
-    defstruct [:path, :filename, :version, :resized, :binary, :public_url, :main]
+    defstruct [:path, :filename, :version, :resized, :binary, :public_url, :main, :watermarked]
 
     @transformer Application.get_env(:commercefacile, Commercefacile.Image) |> Keyword.get(:transformer)
-    @cloud_store Application.get_env(:commercefacile, Commercefacile.Image) |> Keyword.get(:cloud_store)
+    @store Application.get_env(:commercefacile, Commercefacile.Image) |> Keyword.get(:store)
 
     @local_input_storage Path.expand("store/input")
     @local_output_storage Path.expand("store/output")
@@ -16,28 +16,74 @@ defmodule Commercefacile.Image do
     def new!(version, %{path: path, filename: filename}) do
         reference = Ksuid.generate()
         ext = Path.extname(filename)
-        with {:ok, s_path} <- _store_locally(version, reference, path, ext),
-            {:ok, r_path} <- resize(version, s_path)
+        new_path = generate_temp_filename(version, reference, ext) |> generate_path(:input)
+
+        with :ok <- File.cp!(path, new_path),
+            {:ok, r_path} <- resize(version, new_path)
         do
-            _remove(s_path)
-            {:ok, reference, %Commercefacile.Image{path: r_path, filename: Path.basename(r_path), version: version, resized: true}}
+            _remove(new_path)
+            {:ok, 
+                reference, %Commercefacile.Image{
+                    public_url: nil, path: r_path, filename: Path.basename(r_path), version: version, resized: true
+                }
+            }
         else
             # {:error, :enoent} -> raise("File Not Found Error") 
             # {:error, :resize} -> raise("File Resize Error") 
             {:error, reason} -> {:error, reason}
         end
     end
-    def new!(version, filename, index, [{:scope, %{uuid: uuid}}]) do
+    def new!(version, @rackspace_public_host <> "/ads/temp/" <> _ = url, index, [{:scope, %{uuid: uuid}}]) do
         main? = index == 1
-        reference = _get_reference(filename)
-        ext = Path.extname filename
-        with {:ok, s_path} <- _store_locally(version, reference, {index, uuid}, ext),
+        reference = _get_reference(url)
+        ext = Path.extname(url)
+        %{path: cloud_path} = URI.parse(url)
+        local_path = generate_filename(version, index, uuid, ext) |> generate_path(:input)
+
+        with {:ok, s_path} <- store_locally(from: cloud_path, to: local_path),
             {:ok, r_path} <- resize(version, s_path)
         do
             _remove(s_path)
-            {:ok, reference, %Commercefacile.Image{main: main?, path: r_path, filename: Path.basename(r_path), version: version, resized: true}}
+            {:ok, 
+                reference, %Commercefacile.Image{
+                    public_url: nil, main: main?, path: r_path, filename: Path.basename(r_path), version: version, resized: true
+                }
+            }
         else
             # {:error, reason}  -> raise("File Write Error")
+            {:error, reason} -> {:error, reason}
+        end
+    end
+    def new!(version, @rackspace_public_host <> "/ads/" <> _filename = url, index, [{:scope, %{uuid: uuid}}]) do
+        main? = index == 1
+        reference = _get_reference(url)
+        filename = generate_filename(version, index, uuid, Path.extname(url))
+
+        {:ok, resized_path} = 
+            if version == :original do
+                resize(:original, url)
+            else
+                %{path: cloud_path} = URI.parse(url)
+                local_path = generate_path(filename, :input)
+                {:ok, s_path} = store_locally(from: cloud_path, to: local_path)
+                resize(version, s_path)
+            end
+
+        public_url = if version == :original, do: url, else: nil 
+
+        {:ok, 
+            reference, %Commercefacile.Image{
+                public_url: public_url, main: main?, path: resized_path, filename: filename, version: version, resized: true
+            }
+        }
+    end
+
+    defp store_locally([{:from, cloud_path}, {:to, local_path}]) do
+        with {:ok, image} <- @store.get(cloud_path),
+            :ok <- File.write!(local_path, image)
+        do
+            {:ok, local_path}
+        else 
             {:error, reason} -> {:error, reason}
         end
     end
@@ -52,21 +98,36 @@ defmodule Commercefacile.Image do
         reference
     end
 
-    def resize(:small, path) do
+
+    def resize(:original, @rackspace_public_host <> _ = url) do
+        %{path: path} = URI.parse(url)
+        IO.inspect {:resize, :original, url}
+        {:ok, path}
+    end
+    def resize(version, path) do
+        case _do_resize(version, path) do
+            {:ok, output_path} ->
+                _remove(path)
+                {:ok, output_path}
+            {:error, :resize} -> {:error, :resize}
+        end
+    end
+
+    defp _do_resize(:small, path) do
         output = Path.basename(path) |> generate_path(:output)
         case @transformer.transform(path, output, {:resize, @small}) do
-            {_, 0} -> {:ok, path}
+            {:ok, _path} -> {:ok, output}
             _ -> {:error, :resize}
         end
     end
-    def resize(:big, path) do
+    defp _do_resize(:big, path) do
         output = Path.basename(path) |> generate_path(:output)
         case @transformer.transform(path, output, {:resize, @big}) do
-            {_, 0} -> {:ok, path}
+            {:ok, _path} -> {:ok, output}
             _ -> {:error, :resize}
         end
     end
-    def resize(:original, path) do
+    defp _do_resize(:original, path) do
         output = Path.basename(path) |> generate_path(:output)
         IO.inspect output
         case File.cp!(path, output) do
@@ -75,14 +136,23 @@ defmodule Commercefacile.Image do
         end
     end
 
-    def watermark(%Commercefacile.Image{resized: true, path: path, version: version}, watermark)
+    def watermark(%Commercefacile.Image{watermarked: nil, resized: true, path: path, version: version} = image, watermark)
     when version != :original
     do
-        @transformer.transform(path, path, {:watermark, watermark})
+        case @transformer.transform(path, path, {:watermark, watermark}) do
+            {:ok, _path} -> {:ok, %{image | watermarked: true}}
+            {:error, reason} -> {:error, reason}
+        end
     end
 
-    def store(:cloud, %Commercefacile.Image{path: path, filename: filename} = file) do
+    def get_watermark_path(), do: @watermark_path
+
+    def store(:cloud, %Commercefacile.Image{version: :original, public_url: @rackspace_public_host <> "/ads" <> _} = image) do
+        {:ok, image}
+    end
+    def store(:cloud, %Commercefacile.Image{public_url: nil, path: path, filename: filename} = file) do
         cloud_path = generate_path(filename, :cloud)
+        {:storing, cloud_path}
         case do_store(path, cloud_path, file) do
             {:ok, file} -> 
                 _remove(path)
@@ -93,6 +163,7 @@ defmodule Commercefacile.Image do
         end
     end
     def store(:temp, %Commercefacile.Image{path: path, filename: filename} = file) do
+        IO.inspect {:temp_store, path}
         cloud_path = generate_path(filename, :temp)
         case do_store(path, cloud_path, file) do
             {:ok, file} -> 
@@ -105,7 +176,7 @@ defmodule Commercefacile.Image do
     end
 
     defp do_store(path, cloud_path, %Commercefacile.Image{} = file) do
-        case @cloud_store.put(path, cloud_path) do
+        case @store.put(path, cloud_path) do
             :ok -> {:ok, %{file | path: cloud_path, public_url: url(:cloud, cloud_path)}}
             :error -> :error
         end
@@ -113,7 +184,7 @@ defmodule Commercefacile.Image do
 
     def get(:cloud, path, save_at) do
         IO.inspect {:donwload, path}
-        case @cloud_store.get(path) do
+        case @store.get(path) do
             {:ok, binary} -> 
                 File.write!(save_at, binary)
                 {:ok, %Commercefacile.Image{path: save_at, filename: Path.basename(path), binary: binary}}
@@ -121,53 +192,19 @@ defmodule Commercefacile.Image do
         end
     end
 
-    def delete(:cloud, @rackspace_public_host <> path) do
-        @cloud_store.delete(path)
+    def delete(:cloud, @rackspace_public_host <> path = url) do
+        IO.inspect {:deleting, url}
+        @store.delete(path)
     end
     def delete(:cloud, filename) do
+        IO.inspect {:deleting, filename}
         generate_temp_path(filename)
-        |> @cloud_store.delete
+        |> @store.delete
     end
 
     def url(:cloud, @rackspace_public_host <> _ = url), do: url
     def url(:cloud, path) do
         Path.join(@rackspace_public_host, path)
-    end
-
-    defp _store_locally(version, reference, {index, ad_uuid}, ext) do
-        path = generate_temp_filename(:original, reference, ext) |> generate_temp_path
-        new_path = generate_filename(version, index, ad_uuid, ext)
-            |> generate_path(:input)
-        
-        IO.inspect {:ref, reference}
-        IO.inspect {:index, index}
-        IO.inspect {:uuid, ad_uuid}
-        IO.inspect {:old, path}
-        IO.inspect {:new, new_path}
-
-        with {:ok, image} <- @cloud_store.get(path),
-            :ok <- File.write!(new_path, image)
-        do
-            {:ok, new_path}
-        else 
-            {:error, reason} -> {:error, reason}
-        end
-    end
-    defp _store_locally(version, reference, path, ext) do
-        new_path = generate_temp_filename(version, reference, ext)
-            |> generate_path(:input)
-        
-        IO.inspect {:old, path}
-        IO.inspect {:new, new_path}
-
-        with true <- File.exists?(path),
-            :ok <- File.cp!(path, new_path)
-        do
-            {:ok, new_path}
-        else
-            false -> {:error, :enoent}
-            {:error, reason} -> {:error, reason}
-        end
     end
 
     defp _remove(path) do
@@ -177,10 +214,10 @@ defmodule Commercefacile.Image do
     end
 
     def generate_path(filename, :cloud) do
-        "ads/#{filename}"
+        "/ads/#{filename}"
     end
     def generate_path(filename, :temp) do
-        "ads/temp/#{filename}"
+        "/ads/temp/#{filename}"
     end
     def generate_path(filename, :input) do
         "#{@local_input_storage}/ads/#{filename}"
@@ -200,7 +237,7 @@ defmodule Commercefacile.Image do
     end
 
     def generate_temp_path(filename) do
-        "ads/temp/#{filename}"
+        "/ads/temp/#{filename}"
     end
 
     def generate_temp_filename(:small, reference, ext) do

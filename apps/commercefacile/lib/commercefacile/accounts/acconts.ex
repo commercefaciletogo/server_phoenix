@@ -36,9 +36,11 @@ defmodule Commercefacile.Accounts do
 
     # ✓
     def new_guest(%{} = data) do
+        {:ok, info} = Mapail.map_to_struct(data, Accounts.Guest.Information)
+        {:ok, ad} = Mapail.map_to_struct(data, Accounts.Guest.Ad)
         %Accounts.Guest{
-            info: Mapail.map_to_struct(data, Accounts.Guest.Information),
-            ad: Mapail.map_to_struct(data, Accounts.Guest.Ad)
+            info: info,
+            ad: ad
         }
     end
 
@@ -46,10 +48,15 @@ defmodule Commercefacile.Accounts do
     def phone_taken?(phone) do
         case Repo.get_by(Accounts.User, phone: format_phone(phone)) do
             nil -> false
-            %Accounts.User{verified: false} -> {true, :unverified_user}
+            %Accounts.User{verified: false} -> {true, :unverified_user, phone}
             %Accounts.User{verified: true, active: false} -> {true, :inactive_user}
             %Accounts.User{verified: true, active: true} -> {true, :active_user}
         end
+    end
+
+    def user_location_set?(%Accounts.User{} = user) do
+        user = Repo.preload(user, [:location])
+        not is_nil(user.location)
     end
 
     # ✓
@@ -123,6 +130,12 @@ defmodule Commercefacile.Accounts do
     end
 
     # ✓
+    def reset_user_password(reset, user_uuid) do
+        case Repo.get_by(Accounts.User, uuid: user_uuid) do
+            %Accounts.User{} = user -> reset_user_password(%{reset: reset, user: user}) 
+            nil -> {:error, :not_found}
+        end
+    end
     def reset_user_password(%{reset: reset, user: user}) do
         changeset = Accounts.Embededs.changeset(reset, :reset)
         if changeset.valid? do

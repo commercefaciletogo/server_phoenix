@@ -1,8 +1,9 @@
 <script>
     window.totalOfImagesInSession = <%= length(@images) %>;
     window.sessionImages = <%= raw Poison.encode! @images %>;
-    window.uploadUrl = "/uploads";
+    window.uploadUrl = "<%= upload_path(@conn, :upload) %>";
     window.csrfToken = <%= raw Plug.CSRFProtection.get_csrf_token() |> Poison.encode! %>;
+    window.editMode = <%= @edit_mode %>
 
     function openCategoryMegaMenu(){
         document.querySelector(".category-mega-menu").classList.toggle("is-hidden");

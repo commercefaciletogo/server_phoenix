@@ -107,4 +107,9 @@
     .menu .menu-list a:hover{
         color: #f79f36;
     }
+
+    .rejected {
+        border: solid 1px #ff3860 !important;
+        border-radius: 3px !important;
+    }
 </style>

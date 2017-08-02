@@ -2,10 +2,6 @@ use Mix.Config
 
 config :commercefacile, ecto_repos: [Commercefacile.Repo]
 
-config :commercefacile, Commercefacile.Image,
-    transformer: Commercefacile.Image.Transformer.ImageMagick,
-    cloud_store: Commercefacile.Image.Storage.Opentex
-
 config :commercefacile, Commercefacile.Image.Storage.Opentex.Cloudfiles,
   adapter: Openstex.Adapters.Rackspace.Cloudfiles.Adapter,
   rackspace: [
