@@ -145,7 +145,11 @@
                             </div>
                             <div class="column is-5">
                                 <div class="content">
-                                    <blockquote style="border-radius: 3px; padding: .35em;"><span>3000</span> Annonces</blockquote>
+                                    <blockquote style="border-radius: 3px; padding: .35em;">
+                                        <span>
+                                            <%= Commercefacile.Web.Helpers.Number.number_with_delimiter(@paginate.count) %>
+                                        </span> Annonces
+                                    </blockquote>
                                 </div>
                             </div>
                             <div class="column is-4">
@@ -178,14 +182,26 @@
             </div>
             <div class="column is-6-desktop is-9-tablet">
 
-                <%= render_many 1..15, Commercefacile.Web.AdView, "ad.html", assigns %>
+                <%= render_many @ads, Commercefacile.Web.AdView, "ad.html", assigns %>
                 
-                <div>
-                    <nav class="pagination is-centered is-small">
-                        <a class="pagination-previous">Precedente</a>
-                        <a class="pagination-next">Suivante</a>
-                    </nav>
-                </div>                
+                <%= unless Enum.empty?(@ads) || @paginate.count < @paginate.limit do %>
+                    <% query = @conn.query_params %>
+                    <div>
+                        <nav class="pagination is-centered is-small">
+                            <%= if @paginate.prev do %>
+                                <a href="<%= ad_path(@conn, :index, Map.merge(query, %{"p" => (@paginate.step - 1)})) %>" class="pagination-previous" >Precedente</a>
+                            <% else %>
+                                <a class="pagination-previous" disabled >Precedente</a>
+                            <% end %>
+
+                            <%= if @paginate.next do %>
+                                <a href="<%= ad_path(@conn, :index, Map.merge(query, %{"p" => (@paginate.step + 1)})) %>" class="pagination-next" >Suivante</a>
+                            <% else %>
+                                <a class="pagination-next" disabled >Suivante</a>
+                            <% end %>
+                        </nav>
+                    </div> 
+                <% end %>           
             </div>
             <div class="column is-3-desktop is-3-tablet is-hidden-mobile">
                <!--Advertisment-->

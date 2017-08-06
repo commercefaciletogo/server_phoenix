@@ -2,9 +2,11 @@ defmodule Commercefacile.Ads.Reported do
     use Ecto.Schema
     import Ecto.Changeset
 
+    @primary_key {:id, Commercefacile.Type.EctoKsuid, autogenerate: true}
+
     schema "reported_ads" do
-        field :user_id, :integer
-        field :ad_id, :integer
+        field :user_id, :string
+        field :ad_id, :string
 
         timestamps()
     end

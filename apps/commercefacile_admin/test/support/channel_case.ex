@@ -1,4 +1,4 @@
-defmodule CommercefacileAdmin.Web.ChannelCase do
+defmodule CommercefacileAdmin.ChannelCase do
   @moduledoc """
   This module defines the test case to be used by
   channel tests.
@@ -21,7 +21,7 @@ defmodule CommercefacileAdmin.Web.ChannelCase do
       use Phoenix.ChannelTest
 
       # The default endpoint for testing
-      @endpoint CommercefacileAdmin.Web.Endpoint
+      @endpoint CommercefacileAdmin.Endpoint
     end
   end
 

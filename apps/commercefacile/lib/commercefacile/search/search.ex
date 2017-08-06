@@ -1,88 +1,191 @@
 defmodule Commercefacile.Search do
-    defstruct schema: Commercefacile.Ad, fields: [:title], relations: [:category],
-        term: :nothing, 
-        pagination: %{per_page: 15, current_page: 1}, 
-        sort: %{key: :date, direction: :desc}, 
-        filter: %{location: :all, category: :all},
-        query: nil
+
+    defstruct [query: nil, 
+        pagination: %{limit: 10, step: 1, offset: 0, count: nil, prev: false, next: false}, 
+        result: [], 
+        sort: [],
+        search: %{term: nil, columns: []},
+        filter: [],
+        assoc_filter: []
+    ]
+
+    @opaque t :: %__MODULE__{}
+
+    @type error :: {:error, :invalid_query}
+
+    @error {:error, :invalid_query}
 
     alias Commercefacile.Search
 
-    @search_type "ilike"
+    alias Commercefacile.Repo
 
-    def new(term, opts \\ [])
+    import Ecto.Query
 
-    def new(:nothing, []), do: %Search{}
-    def new(term, []), do: %Search{term: term}
+    @default_limit 10
+    @default_step 1
 
-    def new(term, [{:filter, %{location: location, category: nil}}]), do: %Search{term: term,filter: %{location: location, category: :all}}
-    def new(term, [{:filter, %{location: nil, category: category}}]), do: %Search{term: term, filter: %{location: :all, category: category}}
-    def new(term, [{:filter, %{location: _location, category: _category} = filter}]), do: %Search{term: term, filter: filter}
-
-    def new(term, [{:sort, %{key: :date, direction: :asc}}]), do: new(term)
-    def new(term, [{:sort, %{key: :date, direction: :desc} = sort}]), do: %Search{term: term, sort: sort}
-    def new(term, [{:sort, %{key: :price, direction: :asc} = sort}]), do: %Search{term: term, sort: sort}
-    def new(term, [{:sort, %{key: :price, direction: :desc} = sort}]), do: %Search{term: term, sort: sort}
-
-    def new(term, [{:pagination, %{per_page: 15, current_page: 1}}]), do: new(term)
-    def new(term, [{:pagination, %{per_page: _per_page, current_page: _current_page} = pagination}]), do: %Search{term: term, pagination: pagination}
-
-    def new(term, [{:filter, %{location: _, category: _} = filter}, {:sort, %{key: _, direction: _} = sort}]) do
-        filter_search = new(term, filter: filter)
-        sort_search = new(term, sort: sort)
-        %Search{term: term, filter: filter_search.filter, sort: sort_search.sort}
+    @spec search(query :: Ecto.Queryable.t | t, term :: String.t, fields :: [atom]) :: t | error
+    def search(%Search{query: nil}, _term, _fields), do: @error
+    def search(%Search{query: query} = s, term, fields) do
+        Map.merge(s, search(query, term, fields), fn k, v1, v2 -> 
+            case k do
+                :search -> v2
+                :query -> v2
+                _ -> v1
+            end
+        end)
+    end
+    def search(query, term, fields) do
+        query = Enum.reduce(fields, query, fn field, query ->  
+            from q in query, or_where: fragment("? % ?", field(q, ^field), ^term)
+        end)
+        %Commercefacile.Search{search: %{term: term, fields: fields}, query: query}
     end
 
-    def new(term, [{:filter, %{location: _, category: _} = filter}, {:pagination, %{per_page: _, current_page: _} = pagination}]) do
-        filter_search = new(term, filter: filter)
-        pagination_search = new(term, pagination: pagination)
-        %Search{term: term, filter: filter_search.filter, pagination: pagination_search.pagination}
+
+
+    @spec filter(query :: Ecto.Queryable.t | t, filters :: [field: value :: term])  :: t | error
+    def filter(%Search{query: nil}, _filters), do: @error
+    def filter(%Search{query: query} = s, filters) do
+        Map.merge(s, filter(query, filters), fn k, v1, v2 -> 
+            case k do
+                :filter -> v2
+                :query -> v2
+                _ -> v1
+            end
+        end)
+    end
+    def filter(query, filters) do
+        query = Enum.reduce(filters, query, fn {key, value}, query ->
+            from q in query, where: field(q, ^key) == ^value
+        end)
+        %Commercefacile.Search{query: query, filter: filters}
     end
 
-    def new(term, [{:pagination, %{per_page: _, current_page: _} = pagination}, {:sort, %{key: _, direction: _} = sort}]) do
-        sort_search = new(term, sort: sort)
-        pagination_search = new(term, pagination: pagination)
-        %Search{term: term, pagination: pagination_search.pagination, sort: sort_search.sort}
+    @spec assoc_filter(query :: Ecto.Queryable.t | t, filters :: [assoc: value :: {key :: atom, value :: term} | {nested_assoc :: atom, key :: atom, value :: term}])  :: t | error
+    def assoc_filter(%Search{query: nil}, _filters), do: @error
+    def assoc_filter(%Search{query: query} = s, filters) do
+        Map.merge(s, assoc_filter(query, filters), fn k, v1, v2 -> 
+            case k do
+                :assoc_filter -> v2
+                :query -> v2
+                _ -> v1
+            end
+        end)
+    end
+    def assoc_filter(query, filters) do
+        query = Enum.reduce(filters, query, &_build_assoc_query/2)
+        %Commercefacile.Search{query: query, assoc_filter: filters}
     end
 
-    def new(term, [{:filter, %{location: _, category: _} = filter}, {:sort, %{key: _, direction: _} = sort}, {:pagination, %{per_page: _, current_page: _} = pagination}]) do
-        filter_search = new(term, filter: filter)
-        sort_search = new(term, sort: sort)
-        pagination_search = new(term, pagination: pagination)
-        %Search{term: term, filter: filter_search.filter, sort: sort_search.sort, pagination: pagination_search.pagination}
+    defp _build_assoc_query({assoc, {key, value}}, query) do
+        from q in query, 
+            join: a in assoc(q, ^assoc),
+            where: field(a, ^key) == ^value,
+            preload: [{^assoc, a}]
+    end
+    defp _build_assoc_query({assoc, {nested_assoc, {nested_nested_assoc, key}, value}}, query) do
+        from q in query, 
+            join: a in assoc(q, ^assoc),
+            join: n_a in assoc(a, ^nested_assoc),
+            join: n_n_a in assoc(n_a, ^nested_nested_assoc),
+            where: field(n_n_a, ^key) == ^value,
+            preload: [{^assoc, {a, [{^nested_assoc, {n_a, [{^nested_nested_assoc, n_n_a}]}}]}}]
+    end
+    defp _build_assoc_query({assoc, {nested_assoc, key, value}}, query) do
+        from q in query, 
+            join: a in assoc(q, ^assoc),
+            join: n_a in assoc(a, ^nested_assoc),
+            where: field(n_a, ^key) == ^value,
+            preload: [{^assoc, {a, [{^nested_assoc, n_a}]}}]
     end
 
-    def querify(%Search{schema: _schema} = search) do
-        rummage = do_rummage_map(search)
-        rummage
-        # {queryable, _rummage} = Rummage.Ecto.rummage(schema, rummage)
-        # %{search | query: queryable}
+
+    @spec sort(query :: Ecto.Queryable.t | t, fields_with_order :: [order: field :: atom])  :: t | error
+    def sort(%Search{query: nil}, _fields_with_order), do: @error
+    def sort(%Search{query: query} = s, fields_with_order) do
+        Map.merge(s, sort(query, fields_with_order), fn k, v1, v2 -> 
+            case k do
+                :sort -> v2
+                :query -> v2
+                _ -> v1
+            end
+        end)
+    end
+    def sort(query, fields_with_order) do
+        query = from(q in query, order_by: ^fields_with_order)
+        %Commercefacile.Search{query: query, sort: fields_with_order}
     end
 
-    def run(%Search{query: query}) 
-    when query != nil
-    do
-        # perform the search
-    end
 
-    defp do_rummage_map(%Search{fields: [field1]} = search) do
-        %{"search" => %{
-            Atom.to_string(field1) => %{
-                "assoc" => Enum.map(search.relations, &(Atom.to_string(&1))),
-                "search_type" => @search_type,
-                "search_term" => search.term
+
+    @spec paginate(query :: Ecto.Queryable.t | t, opts :: list) :: t | error
+    def paginate(query, opts \\ [])
+    def paginate(%Search{query: nil}, _opts), do: @error 
+    def paginate(%Search{query: query} = s, opts) do
+        Map.merge(s, paginate(query, opts), fn k, v1, v2 -> 
+            case k do
+                :pagination -> v2
+                :query -> v2
+                :result -> v2
+                _ -> v1
+            end
+        end)
+    end
+    def paginate(query, opts) do
+        count = get_count(query)
+        limit = Keyword.get(opts, :limit, @default_limit)
+        step = Keyword.get(opts, :step, @default_step)
+        offset = Keyword.get(opts, :offset, get_default_offset(limit, step, count))
+        query = from q in query, limit: ^limit, offset: ^offset
+        prev = prev?(count, step, limit)
+        next = next?(count, step, limit)
+
+        %Commercefacile.Search{
+            query: query,
+            result: Repo.all(query),
+            pagination: %{
+                prev: prev,
+                step: step,
+                limit: limit,
+                offset: offset,
+                count: count,
+                next: next
             }
-        }, "paginate" => %{
-            "per_page" => search.pagination.per_page,
-            "page" => search.pagination.current_page
-        }, "sort" => %{
-            "assoc" => [],
-            "field" => "#{Atom.to_string(search.sort.key)}.#{Atom.to_string(search.sort.direction)}.ci"
         }
-        # , "filter" => %{
-        #     "location" => search.filter.location,
-        #     "category" => search.filter.category
-        # }
-    }
     end
+
+
+
+    @spec execute(query :: Ecto.Query.t | t) :: t | error
+    def execute(%Search{query: nil}), do: @error
+    def execute(%Search{query: query} = s) do
+        Map.merge(s, paginate(query), fn k, v1, v2 -> 
+            case k do
+                :pagination -> v2
+                :query -> v2
+                :result -> v2
+                _ -> v1
+            end
+        end)
+    end
+    def execute(query), do: paginate(query)
+
+    @spec get_count(query :: Ecto.Queryable.t) :: integer
+    defp get_count(query) do
+         Ecto.Query.exclude(query, :limit)
+            |> Repo.all |> length
+    end
+
+    def get_default_offset(limit, step \\ @default_step, count)
+    def get_default_offset(_limit, 1, _count), do: 0
+    def get_default_offset(limit, step, _count) do
+        (limit * step) - limit
+    end
+
+    
+    def next?(total, current_page, per_page), 
+        do: (Float.ceil(total / per_page) |> round) > current_page   
+
+    def prev?(_total, current_page, _per_page), do: current_page > 1
 end

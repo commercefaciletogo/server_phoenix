@@ -1,0 +1,9 @@
+APP="commercefacile"
+
+BUILD_HOST="build.phoenix.commercefacile.com"
+BUILD_USER="builder"
+BUILD_AT="/home/builder/commercefacile/builds"
+
+PRODUCTION_HOSTS="phoenix.commercefacile.com"
+PRODUCTION_USER="deployer"
+DELIVER_TO="/home/deployer"

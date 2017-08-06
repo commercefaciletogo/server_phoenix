@@ -1,0 +1,14 @@
+<nav class="level">
+    <div class="level-left">
+        <a class="level-item tooltip" data-tooltip="Republier">
+            <span class="icon is-small"><i class="fa fa-send"></i></span>
+        </a>
+        <a class="level-item tooltip" data-tooltip="Modifier">
+            <span class="icon is-small"><i class="fa fa-pencil"></i></span>
+        </a>
+        <a class="level-item tooltip" data-tooltip="Suprimer">
+            <span class="icon is-small"><i class="fa fa-trash"></i></span>
+        </a>
+        <a class="level-item is-hidden-tablet"></a>
+    </div>
+</nav>

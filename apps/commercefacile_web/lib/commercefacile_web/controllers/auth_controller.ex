@@ -17,6 +17,7 @@ defmodule Commercefacile.Web.AuthController do
             {:ok, user, code} ->
                 conn = put_session(conn, :code_reference, code.reference)
                 conn = put_session(conn, :user_in_register_mode, user.uuid)
+                conn = put_status(conn, 303)
                 redirect(conn, to: auth_path(conn, :get_code))
             {:error, :invalid_data, changeset} -> 
                 conn
@@ -39,12 +40,14 @@ defmodule Commercefacile.Web.AuthController do
     def get_reset_verify(conn, _params) do
         conn
         |> put_session(:reset_mode, true)
+        |> put_status(303)
         |> redirect(to: auth_path(conn, :get_verify))
     end
 
     def get_new_verify(conn, _params) do
         conn
         |> put_session(:new_phone, true)
+        |> put_status(303)
         |> redirect(to: auth_path(conn, :get_verify))
     end
 
@@ -69,7 +72,8 @@ defmodule Commercefacile.Web.AuthController do
                 conn = put_session(conn, :code_reference, code.reference)
                 conn = if get_session(conn, :reset_mode), do: put_session(conn, :user_in_reset_mode, user.uuid), else: conn
                 conn = if get_session(conn, :new_phone), do: put_session(conn, :user_in_new_phone_mode, user.uuid), else: conn
-                redirect(conn, to: auth_path(conn, :get_code))
+                put_status(conn, 303)
+                |> redirect(to: auth_path(conn, :get_code))
             {:error, :invalid_data, changeset} ->
                 conn
                 |> put_status(400)
@@ -115,18 +119,24 @@ defmodule Commercefacile.Web.AuthController do
                         %Commercefacile.Accounts.Guest{ad: %Commercefacile.Accounts.Guest.Ad{images: [_|_]} = ad} ->
                             {:ok, _ad} = Commercefacile.Ads.new_ad(ad, user)
                             delete_session(conn, :guest)
+                            |> put_status(303)
                             |> redirect(to: user_path(conn, :dashboard, user.phone))
                         nil ->
                             if get_session(conn, :reset_mode) do
                                 conn
                                 |> delete_session(:reset_mode)
+                                |> put_status(303)
                                 |> redirect(to: auth_path(conn, :get_reset))
+                                |> halt()
                             end
                             if get_session(conn, :new_phone) do
                                 conn
                                 |> delete_session(:new_phone)
+                                |> put_status(303)
                                 |> redirect(to: user_path(conn, :settings, user.phone))
+                                |> halt()
                             end
+                            conn = put_status(conn, 303)
                             redirect(conn, to: logged_in_path(conn, user.phone))
                     end
                 {:error, :invalid_data, changeset} ->
@@ -141,6 +151,7 @@ defmodule Commercefacile.Web.AuthController do
                     |> render("code.html", changeset: changeset)
             end
         else
+            conn = put_status(conn, 303)
             redirect(conn, to: "/")
         end
     end
@@ -161,13 +172,16 @@ defmodule Commercefacile.Web.AuthController do
                         case Commercefacile.Ads.new_ad(ad, user) do
                             {:ok, _ad} -> 
                                 delete_session(conn, :guest)
+                                |> put_status(303)
                                 |> redirect(to: user_path(conn, :dashboard, phone))
                             {:error, :internal_error} ->
                                 put_status(conn, 500)
                                 |> put_view(Commercefacile.Web.ErrorView)
                                 |> render("500.html")
                         end
-                    nil -> redirect(conn, to: logged_in_path(conn, phone))
+                    nil -> 
+                        put_status(conn, 303)
+                        |> redirect(to: user_path(conn, :dashboard, user.phone))
                 end
             {:error, :invalid_data, changeset} ->
                 conn
@@ -222,6 +236,7 @@ defmodule Commercefacile.Web.AuthController do
             case Commercefacile.Accounts.reset_user_password(reset, user_uuid) do
                 {:ok, user} ->
                     Guardian.Plug.sign_in(conn, user)
+                    |> put_status(303)
                     |> redirect(to: logged_in_path(conn, user.phone))
                 {:error, :invalid_data, changeset} ->
                     validate(conn, changeset)
@@ -231,13 +246,15 @@ defmodule Commercefacile.Web.AuthController do
                     |> render("reset.html")
             end
         else
-            redirect(conn, to: NavigationHistory.last_path(conn))
+            put_status(conn, 303)
+            |> redirect(to: NavigationHistory.last_path(conn))
         end
     end
 
     def logout(conn, _params) do
         conn
         |> Guardian.Plug.sign_out
+        |> put_status(303)
         |> redirect(to: "/")
     end
 

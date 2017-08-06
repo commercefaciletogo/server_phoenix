@@ -5,7 +5,7 @@ defmodule Commercefacile.Repo.Migrations.AddVerificationCodesTable do
     create table(:verification_codes) do
       add :code, :string
       add :reference, :string
-      add :user_id, references(:users), on_delete: :delete_all, on_update: :update_all
+      add :user_id, references(:users, type: :string), on_delete: :delete_all, on_update: :update_all
 
       timestamps()
     end

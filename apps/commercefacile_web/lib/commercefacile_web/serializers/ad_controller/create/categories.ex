@@ -4,8 +4,8 @@ defmodule Commercefacile.Web.Serializers.AdController.Create.Categories do
     attribute :name
     attribute :subs
 
-    def subs(%{uuid: uuid, name: name, children: []}) do
-        [uuid, name]
+    def subs(%{id: id, name: name, children: []}) do
+        [id, name]
     end
     def subs(%{children: children}) do
         Commercefacile.Web.Serializers.AdController.Create.Categories.Children.to_list(children)
@@ -13,9 +13,9 @@ defmodule Commercefacile.Web.Serializers.AdController.Create.Categories do
 
     def to_list(collections, :select) do
         collectable = fn 
-            %{name: name, children: [], uuid: uuid} -> 
-                {"#{name}", [[key: name, value: uuid]]}
-            %{name: name, children: children, uuid: _uuid} ->
+            %{name: name, children: [], id: id} -> 
+                {"#{name}", [[key: name, value: id]]}
+            %{name: name, children: children, id: _id} ->
                 {"#{name}", Commercefacile.Web.Serializers.AdController.Create.Categories.Children.to_list(children, :select)}
         end
         Enum.into(collections, %{}, fn i -> collectable.(i) end)
@@ -27,11 +27,11 @@ defmodule Commercefacile.Web.Serializers.AdController.Create.Categories do
         attributes [:key, :value]
 
         def key(%{name: name}), do: name
-        def value(%{uuid: uuid}), do: uuid
+        def value(%{id: id}), do: id
 
         def to_list(collections, :select) do
             Enum.into(collections, [], fn i -> 
-                [key: i.name, value: i.uuid]
+                [key: i.name, value: i.id]
             end)
         end
     end

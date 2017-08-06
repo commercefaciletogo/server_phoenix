@@ -8,7 +8,7 @@ defmodule Commercefacile.Accounts.Verification.Code do
         field :code, :string
         field :reference, :string
 
-        belongs_to :user, Commercefacile.Accounts.User
+        belongs_to :user, Commercefacile.Accounts.User, type: :string
 
         timestamps()
     end

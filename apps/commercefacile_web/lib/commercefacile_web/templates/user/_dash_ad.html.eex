@@ -1,0 +1,53 @@
+<article class="media ad <%= ad_status_class(@user) %>">
+    <div class="media-left">
+        <div class="ad-thumbnails-image-wrapper">
+            <img src="<%= @user.picture %>" alt="<%= @user.title %>">
+        </div>
+    </div>
+    <div class="media-content">
+        <div class="content">
+            <p>
+                <strong class="ad-title"><%= @user.title %></strong>  
+                <small class="status is-hidden-mobile">statue: <%= @user.tr_status %></small>
+            </p>
+        </div>
+        <div class="content is-small">
+            <p class="category">
+                <%= @user.category %>
+            </p>
+        </div>
+        <div class="content">
+            <p class="price">
+                <strong><%= @user.price %></strong>  <span>F CFA</span> 
+            </p>
+        </div>
+    </div>
+    <div class="media-right">
+        <%= ad_actions(@user) %>
+    </div>
+</article>
+
+<%= if @user.status == "rejected" do %>
+    <div class="modal">
+        <div class="modal-background"></div>
+            <div class="modal-card">
+                <header class="modal-card-head" style="padding: .5rem;">
+                    <p class="modal-card-title" style="font-size: 1em;"><%= @user.title %></p>
+                    <button class="delete"></button>
+                </header>
+            <section class="modal-card-body" style="padding: .5rem;">
+                <div class="content">
+                    <ol style="margin-top: 0;">
+                        <%= for field <- @user.rejecteds do %>
+                            <li><%= field %></li>
+                        <% end %>
+                    </ol>
+                </div>
+            </section>
+            <footer class="modal-card-foot" style="padding: .5rem;">
+                <a class="button is-small">Corriger</a>
+                <a class="button is-small">Fermer</a>
+            </footer>
+        </div>
+    </div>
+<% end %>

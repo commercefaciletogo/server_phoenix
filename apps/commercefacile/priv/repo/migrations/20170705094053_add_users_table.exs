@@ -2,7 +2,8 @@ defmodule Commercefacile.Repo.Migrations.AddUsersTable do
   use Ecto.Migration
 
   def change do
-    create table(:users) do
+    create table(:users, primary_key: false) do
+      add :id, :string, primary_key: true
       add :uuid, :string
       add :name, :string
       add :password, :string

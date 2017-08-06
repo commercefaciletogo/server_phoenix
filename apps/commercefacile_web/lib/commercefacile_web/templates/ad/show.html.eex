@@ -53,7 +53,10 @@
                                     </tr>
                                     <tr>
                                         <td><strong>Prix</strong></td>
-                                        <td><span class="price"><%= @ad.price %></span></td>
+                                        <td><span class="price">
+                                            <%= @ad.price %> F CFA
+                                            </span>
+                                        </td>
                                     </tr>
                                     <%= unless @author.location == "N/A" do %>
                                         <tr>

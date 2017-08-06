@@ -59,10 +59,10 @@
                         <div class="field">
                             <p class="control is-expanded">
                                 <div class="select is-fullwidth">
-                                    <%= select f, :category, @categories, prompt: "Choisir une categorie" %>
+                                    <%= select f, :category_id, @categories, prompt: "Choisir une categorie" %>
                                 </div>
                             </p>
-                            <%= make_help f, :category %>
+                            <%= make_help f, :category_id %>
                         </div>
                     </div>
                 </div>
@@ -209,10 +209,10 @@
                             <div class="field">
                                 <div class="control is-expanded">
                                     <div class="select is-fullwidth">
-                                        <%= select f, :location, @locations, prompt: "Choisir votre lieu" %>
+                                        <%= select f, :location_id, @locations, prompt: "Choisir votre lieu" %>
                                     </div>
                                 </div>
-                                <%= make_help f, :location %>
+                                <%= make_help f, :location_id %>
                             </div>
                         </div>
                     </div>

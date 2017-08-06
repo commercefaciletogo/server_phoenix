@@ -9,7 +9,7 @@ defmodule Commercefacile.Accounts.Embededs do
         |> Changeset.cast(params, Map.keys(types))
         |> Changeset.validate_required(Map.keys(types))
         |> format_phone
-        |> Changeset.validate_length(:phone, is: 11)
+        |> Changeset.validate_length(:phone, is: 12)
     end
     def changeset(params, :register) do
         data = %{}
@@ -22,10 +22,29 @@ defmodule Commercefacile.Accounts.Embededs do
         |> Changeset.cast(params, Map.keys(types))
         |> Changeset.validate_required(Map.keys(types))
         |> format_phone
-        |> Changeset.validate_length(:phone, is: 11)
+        |> Changeset.validate_length(:phone, is: 12)
         |> Changeset.validate_length(:password, min: 7)
         |> Changeset.validate_confirmation(:password)
         |> Changeset.validate_acceptance(:terms)
+    end
+    def changeset(params, :info) do
+        data = %{}
+        types = %{phone: :string, name: :string, location_id: :integer, email: :string}
+        {data, types}
+        |> Changeset.cast(params, Map.keys(types))
+        |> Changeset.validate_required([:phone, :name])
+        |> Changeset.validate_format(:email, ~r/@/)
+    end
+    def changeset(params, :password) do
+        data = %{}
+        types = %{current_password: :string, 
+                password: :string, 
+                password_confirmation: :string}
+        {data, types}
+        |> Changeset.cast(params, Map.keys(types))
+        |> Changeset.validate_required(Map.keys(types))
+        |> Changeset.validate_length(:password, min: 7)
+        |> Changeset.validate_confirmation(:password)
     end
     def changeset(params, :code) do
         data = %{}
@@ -52,7 +71,7 @@ defmodule Commercefacile.Accounts.Embededs do
         |> Changeset.cast(params, Map.keys(types))
         |> Changeset.validate_required(Map.keys(types))
         |> format_phone
-        |> Changeset.validate_length(:phone, is: 11)
+        |> Changeset.validate_length(:phone, is: 12)
     end
 
     defp format_phone(changeset) do

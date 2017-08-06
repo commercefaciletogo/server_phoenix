@@ -11,10 +11,10 @@ config :commercefacile_admin,
   ecto_repos: [CommercefacileAdmin.Repo]
 
 # Configures the endpoint
-config :commercefacile_admin, CommercefacileAdmin.Web.Endpoint,
+config :commercefacile_admin, CommercefacileAdmin.Endpoint,
   url: [host: "localhost"],
-  secret_key_base: "DUw4GgWJTWQzhW7b6GZxIuAZHm+mecf+Rv65zrbLr8q78KRiuWYLClgYBUtueWLq",
-  render_errors: [view: CommercefacileAdmin.Web.ErrorView, accepts: ~w(html json)],
+  secret_key_base: "zPf3bVKDLmIUyGNRAVTCoAij8kzsPfHGsPIoGgCjCM1j/D5uJxB8D/KcNZ94Ae4c",
+  render_errors: [view: CommercefacileAdmin.ErrorView, accepts: ~w(html json)],
   pubsub: [name: CommercefacileAdmin.PubSub,
            adapter: Phoenix.PubSub.PG2]
 
@@ -22,6 +22,9 @@ config :commercefacile_admin, CommercefacileAdmin.Web.Endpoint,
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
   metadata: [:request_id]
+
+config :commercefacile_admin, :generators,
+  context_app: false
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

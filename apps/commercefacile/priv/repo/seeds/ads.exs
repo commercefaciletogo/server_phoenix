@@ -1,3 +1,17 @@
+user_path = Path.expand "priv/repo/seeds/master/users.json"
+user_s = File.read! user_path
+# convert
+user_c = Poison.Parser.parse! user_s
+
+find_user_id = fn user_id -> 
+    case Enum.find(user_c, fn u -> u["id"] == user_id end) do
+        nil -> raise("User not found in json data")
+        user -> 
+            %{id: id} = Commercefacile.Repo.get_by!(Commercefacile.Accounts.User, uuid: user["uuid"])
+            id
+    end
+end
+
 path = Path.expand "priv/repo/seeds/master/ads.json"
 s = File.read! path
 # convert
@@ -7,18 +21,17 @@ parse = fn
     nil -> nil 
     time -> Timex.parse!(time, "{ISO:Extended}")
 end
-h = Hashids.new([min_len: 7, salt: "XPEoIo/y8r5Tw2tcWqse6Fed2oDpWUGqo+IDd7L/WcDjWdXUN01f9mu/He476IIv"])
+
 sd = Stream.map(c, fn a -> %Commercefacile.Ads.Ad{
-    id: a["id"],
     uuid: a["uuid"],
-    code: Commercefacile.Services.Generator.generate_hashid(ad["id"]),
+    code: Commercefacile.Services.Generator.generate_hashid(a["id"]),
     title: a["title"],
     condition: a["condition"],
     description: a["description"],
-    price: Integer.to_string(a["price"]),
+    price: a["price"],
     negotiable: a["negotiable"],
     category_id: a["category_id"],
-    user_id: a["user_id"],
+    user_id: find_user_id.(a["user_id"]),
     status: a["status"],
     end_date: parse.(a["end_date"]),
     start_date: parse.(a["start_date"]),

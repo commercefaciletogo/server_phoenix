@@ -2,7 +2,10 @@ use Mix.Config
 
 config :commercefacile, ecto_repos: [Commercefacile.Repo]
 
-# config :rummage_ecto, Rummage.Ecto, default_repo: Commercefacile.Repo
+# config :otto, 
+#   repo: Commercefacile.Repo, 
+#   paginate: true,
+#   limit: 10
 
 config :commercefacile, Commercefacile.Image.Storage.Opentex.Cloudfiles,
   adapter: Openstex.Adapters.Rackspace.Cloudfiles.Adapter,

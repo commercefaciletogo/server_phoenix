@@ -44,6 +44,13 @@ defmodule Commercefacile.Accounts do
         }
     end
 
+    def phone_active?(phone) do
+        case phone_taken?(phone) do
+            {true, :active_user} -> true
+            _ -> false
+        end
+    end
+
     # ✓
     def phone_taken?(phone) do
         case Repo.get_by(Accounts.User, phone: format_phone(phone)) do

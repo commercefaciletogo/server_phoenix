@@ -47,7 +47,7 @@ defmodule Commercefacile.Web.Mixfile do
      {:phoenix_html_simplified_helpers, "~> 1.2"},
      {:font_awesome_phoenix, "~> 1.0"},
      {:commercefacile, in_umbrella: true},
-     {:commercefacile_admin, in_umbrella: true}, 
+    #  {:commercefacile_admin, in_umbrella: true}, 
      {:junit_formatter, ">= 0.0.0", only: :test},
      {:doc_first_formatter, "~> 0.0.1", only: :test},
      {:mix_test_watch, "~> 0.3", only: :dev, runtime: false, override: true},

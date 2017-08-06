@@ -17,9 +17,9 @@ defmodule Commercefacile.Web.AdView do
         ~E(<title>Commercefacile.com | Modifier <%= ad.title %></title>)
     end
 
-    def render("share-meta.show.html", %{conn: conn, ad: %{uuid: uuid, title: title, description: description, images: [first|_], }}) do
+    def render("meta.show.html", %{conn: conn, ad: %{uuid: uuid, title: title, description: description, pictures: [%{path: first}|_], }}) do
         description = Curtail.truncate(description, length: 300)
-        url = ad_path(conn, :show, uuid)
+        url = ad_url(conn, :show, uuid)
         ~E"""
         <meta itemprop="name"               content="Commercefacile.com | <%= title %>">
         <meta itemprop="description"        content="<%= description %>">

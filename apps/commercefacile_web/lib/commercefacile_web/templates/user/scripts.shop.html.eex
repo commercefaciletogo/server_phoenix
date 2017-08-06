@@ -1,0 +1,25 @@
+<script src="<%= static_path(@conn, "/js/vendors/blazy.min.js") %>"></script>
+<script>
+    ;(function() {
+        var bLazy = new Blazy({offset: 20});
+    })();
+
+    function getJsonFromUrl() {
+        var query = location.search.substr(1);
+        var result = {};
+        query.split("&").forEach(function(part) {
+            var item = part.split("=");
+            result[item[0]] = decodeURIComponent(item[1]);
+        });
+        return result;
+    }
+
+    if(getJsonFromUrl().hasOwnProperty("q")){
+        var searchInputs = document.querySelectorAll("input[name='q']");
+        var query = getJsonFromUrl().q;
+        console.log(searchInputs);
+        searchInputs.forEach(function(input){
+            input.value = query.replace("+", " ");
+        });
+    }
+</script>

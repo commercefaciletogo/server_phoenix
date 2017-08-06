@@ -2,6 +2,7 @@ defmodule Commercefacile.Ads do
     import Ecto.Query, only: [from: 2]
 
     alias Commercefacile.Repo
+    alias Commercefacile.Search
     alias Commercefacile.Ads.{
         Category,
         Ad,
@@ -10,10 +11,118 @@ defmodule Commercefacile.Ads do
         Rejected,
         Favorited
     }
+    alias Commercefacile.Accounts.User
 
     @default_ads_life [months: 6]
-
+    @default_search_fields [:title, :description]
     @generator Application.get_env(:commercefacile, Commercefacile.Services) |> Keyword.get(:generator)
+
+    def favorites(user_id) do
+        %User{} = user = Repo.get(User, user_id)
+        %User{favorited_ads: ads} = Repo.preload(user, :favorited_ads)
+        %{ads: Repo.preload(ads, [:images, :category, :rejected])}
+    end
+
+    def shop(params \\ %{}, [{:phone, phone}]) do
+        case Repo.get_by(Commercefacile.Accounts.User, phone: phone) do
+            %{active: true, verified: true} = user ->
+                result = list(Map.merge(params, %{"owner" => phone, "status" => :online}))
+                Map.merge(result, %{owner: user})
+            %{active: false} -> {:error, :not_active}
+            _ -> {:error, :not_found}
+        end
+    end
+
+    def list(params \\ %{}) do
+        query = Ad
+
+        # search term? => q
+        query = if term = Map.get(params, "q") do
+            term = if is_integer(term), do: Integer.to_string(term), else: term
+            IO.inspect({:search, term})
+            Search.search(query, term, @default_search_fields)
+        else
+            query
+        end
+
+        query = case Map.get(params, "status") do
+            :online -> Search.filter(query, status: "online")
+            :rejected -> Search.filter(query, status: "rejected")
+            :pending -> Search.filter(query, status: "pending")
+            :offline -> Search.filter(query, status: "offline")
+            _ -> query
+        end
+
+        # boutique filter? => owner
+        query = if phone = Map.get(params, "owner") do
+            phone = if is_integer(phone), do: Integer.to_string(phone), else: phone
+            case Repo.get_by(Commercefacile.Accounts.User, phone: phone) do
+                %{active: true, verified: true, id: id} ->
+                    Search.filter(query, user_id: id)
+                _ -> query
+            end  
+        else
+            query
+        end
+
+        # category filter? => c
+        query = if c_uuid = Map.get(params, "c") do
+            c_uuid = if is_integer(c_uuid), do: Integer.to_string(c_uuid), else: c_uuid
+            case Repo.get_by(Category, uuid: c_uuid) do
+                nil -> query
+                %{id: c_id, parent_id: nil} -> 
+                    Search.assoc_filter(query, category: {:parent, :id, c_id})
+                %{id: c_id} -> 
+                    Search.filter(query, category_id: c_id)
+                _ -> query
+            end
+        else
+            query
+        end
+
+        # location filter? => l
+        query = if l_uuid = Map.get(params, "l") do
+            l_uuid = if is_integer(l_uuid), do: Integer.to_string(l_uuid), else: l_uuid
+            case Repo.get_by(Commercefacile.Locations.Location, uuid: l_uuid) do
+                nil -> query
+                %{id: l_id, parent_id: nil} -> Search.assoc_filter(query, user: {:location, {:parent, :id}, l_id})
+                %{id: l_id} -> Search.assoc_filter(query, user: {:location, :id, l_id})
+                _ -> query
+            end
+        else
+            query
+        end
+
+        # price sort? => p|[asc, desc], date sort? => d|[asc, desc]
+        query = if sort = Map.get(params, "s") do
+            clause = case String.replace(sort, " ", "") do
+                "p|asc" -> [asc: :price]
+                "p|desc" -> [desc: :price]
+                "d|asc" -> [asc: :start_date]
+                "d|desc" -> [desc: :start_date]
+                _ -> [desc: :start_date]
+            end
+            Search.sort(query, clause)
+        else
+            Search.sort(query, {:desc, :start_date})
+        end
+
+        # page? => p
+        %{result: ads} = search = unless step = Map.get(params, "p") do
+            Search.execute(query)
+        else
+            with true <- is_binary(step),
+                {step, _} <- Integer.parse(step, 10)
+            do
+                Search.paginate(query, step: step)
+            else
+                false -> Search.paginate(query, step: step)
+                _ -> Search.execute(query)
+            end
+        end
+
+        %{search | result: Repo.preload(ads, [:images, :category, :rejected])}
+    end
 
     def new_ad(%Commercefacile.Accounts.Guest.Ad{} = ad, user) do
         ad = Map.from_struct ad
@@ -22,9 +131,8 @@ defmodule Commercefacile.Ads do
     def new_ad(%{} = ad, %{id: user_id} = _user) do
         changeset = Ad.form_changeset(ad, :private)
         if changeset.valid? do
-            %{category: category_uuid, images: images} = changes = changeset.changes
-            %{id: category_id} = Repo.get_by(Category, uuid: category_uuid)
-            ad_changeset = Ad.changeset(%Ad{}, Map.merge(changes, %{user_id: user_id, category_id: category_id}))
+            %{images: images} = changes = changeset.changes
+            ad_changeset = Ad.changeset(%Ad{}, Map.merge(changes, %{user_id: user_id}))
                 |> Ad.add_uuid
                 |> Ad.add_pending_status
 
@@ -101,11 +209,10 @@ defmodule Commercefacile.Ads do
         %Ad{} = ad = Repo.get_by(Ad, uuid: ad_uuid)
         if changeset.valid? do
             # save
-            %{category: category_uuid, images: images} = changes = changeset.changes
+            %{images: images} = changes = changeset.changes
             result = Ecto.Multi.new
                 |> Ecto.Multi.run(:ad, fn _ -> 
-                    %{id: category_id} = Repo.get_by(Category, uuid: category_uuid)
-                    changes = Map.merge(Map.drop(changes, [:images, :category]), %{status: "pending", category_id: category_id})
+                    changes = Map.merge(Map.drop(changes, [:images]), %{status: "pending"})
                     Repo.preload(ad, [:images])
                     |> Ad.changeset(changes)
                     |> Ad.add_pending_status

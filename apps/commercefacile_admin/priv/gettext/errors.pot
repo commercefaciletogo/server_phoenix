@@ -7,6 +7,7 @@
 ## Run `mix gettext.extract` to bring this file up to
 ## date. Leave `msgstr`s empty as changing them here as no
 ## effect: edit them in PO (`.po`) files instead.
+
 ## From Ecto.Changeset.cast/4
 msgid "can't be blank"
 msgstr ""
@@ -17,6 +18,10 @@ msgstr ""
 
 ## From Ecto.Changeset.put_change/3
 msgid "is invalid"
+msgstr ""
+
+## From Ecto.Changeset.validate_acceptance/3
+msgid "must be accepted"
 msgstr ""
 
 ## From Ecto.Changeset.validate_format/3

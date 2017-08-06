@@ -2,7 +2,7 @@ defmodule Commercefacile.Ads.Ad do
     use Ecto.Schema
     import Ecto.Changeset
 
-    # use Rummage.Ecto
+    @primary_key {:id, Commercefacile.Type.EctoKsuid, autogenerate: true}
 
     @default_duration [months: 1]
 
@@ -12,7 +12,7 @@ defmodule Commercefacile.Ads.Ad do
         description: :string, 
         price: :string, 
         negotiable: :boolean, 
-        category: :string, 
+        category_id: :integer, 
         images: {:array, :string}
     }
     @guest %{
@@ -20,7 +20,7 @@ defmodule Commercefacile.Ads.Ad do
         phone: :string,
         password: :string,
         password_confirmation: :string,
-        location: :string
+        location_id: :integer
     }
 
     schema "ads" do
@@ -30,14 +30,14 @@ defmodule Commercefacile.Ads.Ad do
         field :title, :string
         field :condition, :string
         field :description, :string
-        field :price, :string
+        field :price, :integer
         field :negotiable, :boolean
         field :status, :string
 
         field :start_date, :utc_datetime
         field :end_date, :utc_datetime        
 
-        belongs_to :user, Commercefacile.Accounts.User
+        belongs_to :user, Commercefacile.Accounts.User, type: :string
         belongs_to :category, Commercefacile.Ads.Category
         has_many :images, Commercefacile.Ads.Images, on_delete: :delete_all
         has_one :rejected, Commercefacile.Ads.Rejected, on_delete: :delete_all
@@ -84,7 +84,7 @@ defmodule Commercefacile.Ads.Ad do
     end
     def form_changeset(params, :private_with_location) do
         form_changeset(params, :private)
-        |> validate_required([:location])
+        |> validate_required([:location_id])
     end
     def form_changeset(params, :guest) do
         data = %{}

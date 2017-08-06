@@ -12,14 +12,28 @@
     <div class="container">
         <div class="columns">
             <div class="column is-8-desktop is-offset-2-desktop">
-                <%= render "dash-ad.html" %>
+            
+                <%= render_many @ads, Commercefacile.Web.UserView, "_dash_ad.html", assigns %>
 
-                <div style="margin-top: 20px;">
-                    <nav class="pagination is-centered is-small">
-                        <a class="pagination-previous">Precedente</a>
-                        <a class="pagination-next">Suivante</a>
-                    </nav>
-                </div>  
+                <%= unless Enum.empty?(@ads) || @paginate.count < @paginate.limit do %>
+                    <% query = @conn.query_params %>
+                    <div>
+                        <nav class="pagination is-centered is-small">
+                            <%= if @paginate.prev do %>
+                                <a href="<%= user_path(@conn, :dashboard, @owner.phone, Map.merge(query, %{"p" => (@paginate.step - 1)})) %>" class="pagination-previous" >Precedente</a>
+                            <% else %>
+                                <a class="pagination-previous" disabled >Precedente</a>
+                            <% end %>
+
+                            <%= if @paginate.next do %>
+                                <a href="<%= user_path(@conn, :dashboard, @owner.phone, Map.merge(query, %{"p" => (@paginate.step + 1)})) %>" class="pagination-next" >Suivante</a>
+                            <% else %>
+                                <a class="pagination-next" disabled >Suivante</a>
+                            <% end %>
+                        </nav>
+                    </div> 
+                <% end %>  
+
             </div>
         </div>
     </div>

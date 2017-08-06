@@ -5,7 +5,7 @@ defmodule Commercefacile.Accounts.Guest.Ad do
         description: nil, 
         price: nil, 
         negotiable: nil, 
-        category: nil, 
+        category_id: nil, 
         images: []
     ]
 end

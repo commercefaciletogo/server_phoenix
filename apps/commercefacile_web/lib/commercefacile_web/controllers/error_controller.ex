@@ -3,8 +3,8 @@ defmodule Commercefacile.Web.ErrorController do
 
     def unauthenticated(conn, _params) do
         conn
-        |> put_status(401)
         |> save_intended_path
+        |> put_status(303)
         |> redirect(to: auth_path(conn, :get_login))
     end
 

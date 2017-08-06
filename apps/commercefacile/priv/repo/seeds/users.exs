@@ -13,11 +13,9 @@ location_id = fn
 end
 parse = &(Timex.parse!(&1, "{ISO:Extended}"))
 sd = Stream.map(c, fn a -> %Commercefacile.Accounts.User{
-    id: a["id"],
     uuid: a["uuid"],
     name: a["name"],
     verified: true,
-    active: true,
     email: a["email"],
     phone: "00228" <> a["phone"],
     active: a["status"] == "active",

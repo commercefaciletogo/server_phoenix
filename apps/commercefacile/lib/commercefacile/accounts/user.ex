@@ -2,6 +2,8 @@ defmodule Commercefacile.Accounts.User do
     use Ecto.Schema
     import Ecto.Changeset
 
+    @primary_key {:id, Commercefacile.Type.EctoKsuid, autogenerate: true}
+
     schema "users" do
         field :uuid, :string
         field :name, :string
@@ -26,6 +28,7 @@ defmodule Commercefacile.Accounts.User do
         |> validate_format(:email, ~r/@/)
         |> unique_constraint(:email)
         |> format_phone
+        |> unique_constraint(:phone)
         |> add_uuid
         |> hash_password
     end

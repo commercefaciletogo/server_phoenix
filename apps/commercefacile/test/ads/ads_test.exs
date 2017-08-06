@@ -48,6 +48,37 @@ defmodule Commercefacile.AdsTest do
 
         [ad: ad]
     end
+
+    describe "list ad with" do
+        # @tag :skip 
+        test "no params" do
+            assert %{} = Commercefacile.Ads.list
+        end
+        # @tag :skip 
+        test "category" do
+            assert %{} = Commercefacile.Ads.list(%{"c" => "jfkasdlfjajf"})
+        end
+        # @tag :skip 
+        test "location" do
+            assert %{} = Commercefacile.Ads.list(%{"l" => "jfkasdlfjajf"})
+        end
+        # @tag :skip 
+        test "location and category" do
+            assert %{} = Commercefacile.Ads.list(%{"c" => "jfkasdlfjajf", "l" => "jfkasdlfjajf"})
+        end
+        # @tag :skip 
+        test "current page -> 4" do
+            assert %{} = Commercefacile.Ads.list(%{"c" => "jfkasdlfjajf", "l" => "jfkasdlfjajf", "p" => 4})
+        end
+         # @tag :skip 
+        test "sort" do
+            assert %{} = Commercefacile.Ads.list(%{"s" => "d|desc"})
+            assert %{} = Commercefacile.Ads.list(%{"s" => "p|desc"})
+        end
+        test "resilience" do
+            assert %{} = Commercefacile.Ads.list(%{"s" => "d|df", "error" => 2})
+        end
+    end
     
     describe "edit ad" do
 
@@ -65,7 +96,7 @@ defmodule Commercefacile.AdsTest do
                     "https://b86068563707f1548c7c-cc73bb3144250bf95e4a0690bc25f5d2.ssl.cf5.rackcdn.com/ads/temp/0q6nXAUEVhESfmlUEEDZ2GhD5ON_original.jpeg"
                 ]}
 
-            assert {:ok, %{uuid: ^uuid, status: "pending", title: ^title, price: ^price, images: images}} = 
+            assert {:ok, %{uuid: ^uuid, status: "pending", title: ^title, price: 3000, images: images}} = 
                 Commercefacile.Ads.edit_ad(ad.uuid, fields, user)
             assert length(images) == 3
             assert Enum.any?(images, fn %{main: main?} -> main? end)

@@ -11,12 +11,12 @@
                     <div class="media-content">
                         <div class="content">
                             <p>
-                                <strong>John Smith</strong> <small>@johnsmith</small> <small>31m</small>
+                                <strong><%= @owner.name %></strong> 
                             </p>
                         </div>
                         <div class="content is-small">
                             <p>
-                                <strong>John Smith</strong> <small>@johnsmith</small> <small>31m</small>
+                                @<strong><%= @owner.phone %></strong>
                             </p>
                         </div>
                         <!--<nav class="level is-mobile">
@@ -58,29 +58,22 @@
         <div class="columns">
             <div class="column is-8-desktop is-12-tablet is-offset-2-desktop">
                 <div class="columns">
-                    <div class="column is-8">
-                        <div class="field has-addons">
-                            <p class="control is-expanded">
-                                <input class="input" type="text" placeholder="Quest ce que recherchez vous?">
-                            </p>
-                            <p class="control">
-                                <a class="button search">
-                                    RECHERCHER
-                                </a>
-                            </p>
-                        </div>
+                    <div class="column is-10">
+                        <form action="<%= user_path(@conn, :shop, @owner.phone) %>" method="get">
+                            <div class="field has-addons">
+                                <p class="control is-expanded">
+                                    <input required class="input" name="q" type="search" placeholder="Quest ce que recherchez vous?">
+                                </p>
+                                <p class="control">
+                                    <button type="submit" class="button search">
+                                        RECHERCHER
+                                    </button>
+                                </p>
+                            </div>
+                        </form>
                     </div>
-                    <div class="column is-4">
-                        <div class="field">
-                            <p class="control is-expanded">
-                                <span class="select is-fullwidth">
-                                    <select>
-                                        <option>Trier par: Date</option>
-                                        <option>Trier par: Prix</option>
-                                    </select>
-                                </span>
-                            </p>
-                        </div>
+                    <div class="column">
+                        <a href="<%= user_path @conn, :shop, @owner.phone %>" class="button is-outlined is-fullwidth all">Toutes Annonces</a>
                     </div>
                 </div>             
             </div>
@@ -98,14 +91,27 @@
             </div>
             <div class="column is-6-desktop is-8-tablet">
                 
-                <%= render_many 1..5, Commercefacile.Web.UserView, "_shop_ad.html", assigns %>
+                <%= render_many @ads, Commercefacile.Web.UserView, "_shop_ad.html", assigns %>
                 
-                <div>
-                    <nav class="pagination is-centered is-small">
-                        <a class="pagination-previous">Precedente</a>
-                        <a class="pagination-next">Suivante</a>
-                    </nav>
-                </div>                
+                <%= unless Enum.empty?(@ads) || @paginate.count < @paginate.limit do %>
+                    <% query = @conn.query_params %>
+                    <div>
+                        <nav class="pagination is-centered is-small">
+                            <%= if @paginate.prev do %>
+                                <a href="<%= user_path(@conn, :shop, @owner.phone, Map.merge(query, %{"p" => (@paginate.step - 1)})) %>" class="pagination-previous" >Precedente</a>
+                            <% else %>
+                                <a class="pagination-previous" disabled >Precedente</a>
+                            <% end %>
+
+                            <%= if @paginate.next do %>
+                                <a href="<%= user_path(@conn, :shop, @owner.phone, Map.merge(query, %{"p" => (@paginate.step + 1)})) %>" class="pagination-next" >Suivante</a>
+                            <% else %>
+                                <a class="pagination-next" disabled >Suivante</a>
+                            <% end %>
+                        </nav>
+                    </div> 
+                <% end %>     
+
             </div>
             <div class="column is-3-desktop is-3-tablet is-hidden-mobile">
                 <!--<button class="button is-primary is-fullwidth show-help">

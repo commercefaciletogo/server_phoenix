@@ -1,4 +1,8 @@
+<script src="<%= static_path(@conn, "/js/vendors/blazy.min.js") %>"></script>
 <script>
+    ;(function() {
+        var bLazy = new Blazy({offset: 20});
+    })();
     function getJsonFromUrl() {
         var query = location.search.substr(1);
         var result = {};

@@ -10,69 +10,48 @@
 
                 <div class="columns">
                     <div class="column is-6-tablet is-offset-3-tablet">
-                        <a href="<%= auth_path(@conn, :get_new_verify) %>" class="button submit is-fullwidth" style="margin-bottom: 1rem;"> + Numero de telephone</a>
-                        <form action="">
+                        <a href="<%= auth_path(@conn, :get_new_verify) %>" class="button submit is-fullwidth" style="margin-bottom: 1rem;"> Changer Numero de telephone</a>
+                        <%= form_for @info_changeset, user_path(@conn, :update_info, @owner.phone), [as: :info, method: :put], fn f -> %>
                             <div class="field">
                                 <label class="label">Nom Complet</label>
-                                <p class="control has-icons-left has-icons-right">
-                                    <input class="input is-danger" type="text">
-                                    <span class="icon is-small is-left">
-                                    <i class="fa fa-user"></i>
-                                    </span>
-                                    <span class="icon is-small is-right">
-                                    <i class="fa fa-check"></i>
-                                    </span>
+                                <p class="control has-icons-left">
+                                    <%= input f, :name, class: "input", value: @owner.name, required: true %>
                                 </p>
-                                <p class="help is-danger">This username is available</p>
+                                <%= make_help f, :name %>
                             </div>
 
                             <div class="field">
                                 <label class="label">Numero de telephone</label>
-                                <p class="control has-icons-left has-icons-right">
-                                    <input class="input is-danger" type="text">
-                                    <span class="icon is-small is-left">
-                                    <i class="fa fa-phone"></i>
-                                    </span>
-                                    <span class="icon is-small is-right">
-                                    <i class="fa fa-check"></i>
-                                    </span>
+                                <p class="control has-icons-left">
+                                    <%= input f, :name, class: "input", value: @owner.phone, required: true %>
                                 </p>
-                                <p class="help is-danger">This username is available</p>
+                                <%= make_help f, :phone %>
                             </div>
 
                             <div class="field">
                                 <label class="label">Email address</label>
-                                <p class="control has-icons-left has-icons-right">
-                                    <input class="input is-danger" type="email">
-                                    <span class="icon is-small is-left">
-                                    <i class="fa fa-envelope"></i>
-                                    </span>
-                                    <span class="icon is-small is-right">
-                                    <i class="fa fa-check"></i>
-                                    </span>
+                                <p class="control has-icons-left">
+                                    <%= input f, :email, class: "input", value: @owner.email, using: :email_input %>
                                 </p>
-                                <p class="help is-danger">This username is available</p>
+                                <%= make_help f, :email %>
                             </div>
 
                             <div class="field">
                                 <label class="label">Lieu</label>
                                 <p class="control is-expanded">
-                                    <span class="select is-fullwidth">
-                                        <select>
-                                            <option>Trier par: Date</option>
-                                            <option>Trier par: Prix</option>
-                                        </select>
-                                    </span>
+                                    <div class="select is-fullwidth">
+                                        <%= select f, :location_id, @locations, prompt: "Choisir votre lieu" %>
+                                    </div>
                                 </p>
-                                <p class="help is-danger">This username is available</p>
+                                <%= make_help f, :location_id %>
                             </div>
 
                             <div class="field">
                                 <p class="control is-expanded">
-                                    <button class="button submit is-fullwidth">Sauvegarder</button>
+                                    <button type="submit" class="button submit is-fullwidth">Sauvegarder</button>
                                 </p>
                             </div>
-                        </form>
+                        <% end %>
                     </div>
                 </div>
                     
@@ -83,54 +62,40 @@
                 <div class="columns">
                     <div class="column is-6-tablet is-offset-3-tablet">
                         <form action="">
+                        <%= form_for @password_changeset, user_path(@conn, :change_password, @owner.phone), [as: :password, method: :put], fn f -> %>
                             <div class="field">
                                 <label class="label">Mot de passe actuel</label>
                                 <p class="control has-icons-left has-icons-right">
-                                    <input class="input is-danger" type="password" placeholder="***********">
-                                    <span class="icon is-small is-left">
-                                    <i class="fa fa-lock"></i>
-                                    </span>
-                                    <span class="icon is-small is-right">
-                                    <i class="fa fa-check"></i>
-                                    </span>
+                                    <%= input f, :current_password, class: "input", placeholder: "**********", required: true, using: :password_input %>
+                                    <%= make_icon "fa fa-lock" %>
                                 </p>
-                                <p class="help is-danger">This username is available</p>
+                                <%= make_help f, :current_password %>
                             </div>
 
                             <div class="field">
                                 <label class="label">Mot de passe</label>
                                 <p class="control has-icons-left has-icons-right">
-                                    <input class="input is-danger" type="password" placeholder="***********">
-                                    <span class="icon is-small is-left">
-                                    <i class="fa fa-lock"></i>
-                                    </span>
-                                    <span class="icon is-small is-right">
-                                    <i class="fa fa-check"></i>
-                                    </span>
+                                    <%= input f, :password, class: "input", placeholder: "**********", required: true, using: :password_input %>
+                                    <%= make_icon "fa fa-lock" %>
                                 </p>
-                                <p class="help is-danger">This username is available</p>
+                                <%= make_help f, :password %>
                             </div>
 
                             <div class="field">
                                 <label class="label">Comfirmez le mot de passe</label>
                                 <p class="control has-icons-left has-icons-right">
-                                    <input class="input is-danger" type="password" placeholder="***********">
-                                    <span class="icon is-small is-left">
-                                    <i class="fa fa-lock"></i>
-                                    </span>
-                                    <span class="icon is-small is-right">
-                                    <i class="fa fa-check"></i>
-                                    </span>
+                                    <%= input f, :password_confirmation, class: "input", placeholder: "**********", required: true, using: :password_input %>
+                                    <%= make_icon "fa fa-lock" %>
                                 </p>
-                                <p class="help is-danger">This username is available</p>
+                                <%= make_help f, :password_confirmation %>
                             </div>
 
                             <div class="field">
                                 <p class="control is-expanded">
-                                    <button class="button submit is-fullwidth">Reintialiser</button>
+                                    <button type="submit" class="button submit is-fullwidth">Reintialiser</button>
                                 </p>
                             </div>
-                        </form>
+                        <% end %>
                     </div>
                 </div>
                     

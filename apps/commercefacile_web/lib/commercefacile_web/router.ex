@@ -25,7 +25,7 @@ defmodule Commercefacile.Web.Router do
   end
 
   scope "/", Commercefacile.Web do
-    pipe_through :browser # Use the default browser stack
+    pipe_through [:browser, :browser_auth] # Use the default browser stack
 
     get "/", PageController, :index
 
@@ -53,6 +53,10 @@ defmodule Commercefacile.Web.Router do
     get "/annonces/:uuid/modifier", AdController, :edit
     delete "/annonces/:uuid", AdController, :delete
     put "/annonces/:uuid", AdController, :update
+    post "/annonces/:uuid/favorite", AdController, :favorite
+    post "/annonces/:uuid/unfavorite", AdController, :unfavorite
+    post "/annonces/:uuid/report", AdController, :report
+    post "/annonces/:uuid/unreport", AdController, :unreport
     
 
     get "/help", InfoPageController, :help
@@ -71,6 +75,8 @@ defmodule Commercefacile.Web.Router do
       get "/boutique", UserController, :shop
       get "/favoris", UserController, :favorites
       get "/paramètres", UserController, :settings
+      put "/paramètres/info", UserController, :update_info
+      put "/paramètres/password", UserController, :change_password
     end
     
   end

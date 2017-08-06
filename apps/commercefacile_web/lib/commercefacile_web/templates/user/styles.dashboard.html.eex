@@ -4,6 +4,7 @@
         --rejected-color: #ff3860;
         --online-color: #23d160;
         --offline-color: #3273dc;
+        --pending-color: #9203dc;
         --normal-color: whitesmoke;
     }
 
@@ -57,6 +58,9 @@
     .ad.is-offline{
         border-color: var(--offline-color);
     }
+    .ad.is-pending{
+        border-color: var(--pending-color);
+    }
 
     nav.level{
         padding: .1rem;
@@ -69,6 +73,7 @@
     nav.level span.icon:hover{
         color: #33446d;
     }
+
     .ad.is-rejected nav.level{
         background: var(--rejected-color);
     }
@@ -77,6 +82,9 @@
     }
     .ad.is-offline nav.level{
         background: var(--offline-color);
+    }
+    .ad.is-pending nav.level{
+        background: var(--pending-color);
     }
 
     small.status{
@@ -92,6 +100,9 @@
     }
     .ad.is-rejected small.status{
         color: var(--rejected-color);
+    }
+    .ad.is-pending small.status{
+        color: var(--pending-color);
     }
 
     .ad-category, .pagination-previous, .pagination-next{

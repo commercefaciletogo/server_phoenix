@@ -9,8 +9,13 @@ defmodule Commercefacile.Web.AdController do
     @ad_conditions [[key: "new", value: "Nouveau"], [key: "used", value: "Utilisé"]]
     @ad_images_session_key :ad_images
 
-    def index(conn, _params) do
+    def index(conn, params) do
+        %{result: ads, pagination: paginate} = 
+            Commercefacile.Ads.list(Map.merge(params, %{"status" => :online}))
+        ads = Serializer.Index.Ad.to_map(ads)
         conn = add_fixtures(conn, :list)
+        conn = assign(conn, :ads, ads)
+        conn = assign(conn, :paginate, paginate)
         render conn, "index.html"
     end
 
@@ -53,6 +58,9 @@ defmodule Commercefacile.Web.AdController do
                 {true, :inactive_user} -> 
                     put_status(conn, 400)
                     |> put_flash(:info, "Phone belongs to inactive account, contact adminst.. or new account")
+                    |> assign(:post_action, :save)
+                    |> assign(:post_method, :post)
+                    |> assign(:edit_mode, false)
                     |> assign(:changeset, changeset)
                     |> render("create.html")
                 {true, :active_user} -> 
@@ -65,6 +73,8 @@ defmodule Commercefacile.Web.AdController do
             |> get_ad_images
             |> assign(:changeset, %{changeset | action: :validate})
             |> assign(:post_action, :save)
+            |> assign(:post_method, :post)
+            |> assign(:edit_mode, false)
             |> add_fixtures(:select)
             |> render("create.html")
         end
@@ -168,6 +178,22 @@ defmodule Commercefacile.Web.AdController do
             {:ok, _} -> 
                 redirect(conn, to: user_path(conn, :dashboard, user.phone))
         end
+    end
+
+    def favorite(conn, %{"uuid" => uuid}) do
+        
+    end
+
+    def unfavorite(conn, %{"uuid" => uuid}) do
+        
+    end
+
+    def report(conn, %{"uuid" => uuid}) do
+        
+    end
+
+    def unreport(conn, %{"uuid" => uuid}) do
+        
     end
 
     def delete(conn, %{"uuid" => uuid}) do
